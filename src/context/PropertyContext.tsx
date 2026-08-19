@@ -11,7 +11,8 @@ import {
   AIDiagnosis, 
   IssueStatus, 
   IssuePriority,
-  User 
+  User,
+  UserRole 
 } from '../types';
 import { 
   INITIAL_PROPERTIES, 
@@ -33,8 +34,11 @@ interface PhotoViewerState {
 interface PropertyContextType {
   // Authentication
   currentUser: User | null;
-  login: (user: User) => void;
+  login: (identifierOrUser: string | User, password?: string, roleHint?: UserRole, nameHint?: string) => Promise<User>;
+  register: (data: Partial<User> & { password?: string }) => Promise<User>;
   logout: () => void;
+  authError: string | null;
+  clearAuthError: () => void;
 
   properties: Property[];
   units: Unit[];
@@ -197,19 +201,123 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     title: ''
   });
 
+  const [authError, setAuthError] = useState<string | null>(null);
+  const clearAuthError = useCallback(() => setAuthError(null), []);
+
   // Auth actions
-  const login = useCallback((user: User) => {
-    setCurrentUser(user);
-    try {
+  const login = useCallback(async (
+    identifierOrUser: string | User,
+    password?: string,
+    roleHint?: UserRole,
+    nameHint?: string
+  ): Promise<User> => {
+    setAuthError(null);
+
+    // If an entire User object is passed (e.g. 1-click preset)
+    if (typeof identifierOrUser !== 'string') {
+      const user = identifierOrUser;
+      try {
+        if (isBackendOnline) {
+          const resp = await api.login(user.email || user.phone, user.password || 'haven2026', user.role, user.name);
+          if (resp && resp.user) {
+            setCurrentUser(resp.user);
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(resp.user));
+            setViewMode(resp.user.role === 'tenant' ? 'tenant-portal' : 'landlord');
+            return resp.user;
+          }
+        }
+      } catch (err: any) {
+        console.warn('Backend login sync fallback:', err);
+      }
+
+      setCurrentUser(user);
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
-    } catch (e) {
-      console.warn('Failed to save user in storage:', e);
+      setViewMode(user.role === 'tenant' ? 'tenant-portal' : 'landlord');
+      return user;
     }
-    setViewMode(user.role === 'tenant' ? 'tenant-portal' : 'landlord');
-  }, []);
+
+    // String identifier (Email or Phone number typed in by user)
+    const identifier = identifierOrUser.trim();
+    try {
+      if (isBackendOnline) {
+        const resp = await api.login(identifier, password, roleHint, nameHint);
+        if (resp && resp.user) {
+          setCurrentUser(resp.user);
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(resp.user));
+          setViewMode(resp.user.role === 'tenant' ? 'tenant-portal' : 'landlord');
+          return resp.user;
+        }
+      }
+    } catch (err: any) {
+      const msg = err.message || 'Login failed. Please check your credentials.';
+      setAuthError(msg);
+      throw err;
+    }
+
+    // Fallback local match
+    const cleanIdent = identifier.toLowerCase();
+    const matched = DEMO_USERS.find(u => 
+      u.email.toLowerCase() === cleanIdent || 
+      u.phone.replace(/\s+/g, '') === identifier.replace(/\s+/g, '')
+    );
+
+    const activeUser: User = matched || {
+      id: `user-${Date.now()}`,
+      name: nameHint || (roleHint === 'landlord' ? 'Property Manager' : 'Apartment Resident'),
+      email: identifier.includes('@') ? identifier : `resident.${identifier}@havenmgmt.co.ke`,
+      phone: identifier.includes('@') ? '+254 700 000 000' : identifier,
+      role: roleHint || 'tenant',
+      propertyName: roleHint === 'landlord' ? undefined : 'Kilimani Heights Apartments',
+      unitNumber: roleHint === 'landlord' ? undefined : '4B',
+      rentAmount: roleHint === 'landlord' ? undefined : 75000,
+      mpesaAccount: roleHint === 'landlord' ? undefined : 'HAVEN-4B'
+    };
+
+    setCurrentUser(activeUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(activeUser));
+    setViewMode(activeUser.role === 'tenant' ? 'tenant-portal' : 'landlord');
+    return activeUser;
+  }, [isBackendOnline]);
+
+  const register = useCallback(async (data: Partial<User> & { password?: string }): Promise<User> => {
+    setAuthError(null);
+    try {
+      if (isBackendOnline) {
+        const resp = await api.register(data);
+        if (resp && resp.user) {
+          setCurrentUser(resp.user);
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(resp.user));
+          setViewMode(resp.user.role === 'tenant' ? 'tenant-portal' : 'landlord');
+          return resp.user;
+        }
+      }
+    } catch (err: any) {
+      const msg = err.message || 'Registration failed. Please try again.';
+      setAuthError(msg);
+      throw err;
+    }
+
+    const newUser: User = {
+      id: `user-${Date.now()}`,
+      name: data.name || 'Resident',
+      email: data.email || '',
+      phone: data.phone || '+254 700 000 000',
+      role: data.role || 'tenant',
+      propertyName: data.propertyName || (data.role === 'tenant' ? 'Kilimani Heights Apartments' : undefined),
+      unitNumber: data.unitNumber || (data.role === 'tenant' ? '3A' : undefined),
+      rentAmount: data.rentAmount || (data.role === 'tenant' ? 75000 : undefined),
+      mpesaAccount: data.unitNumber ? `HAVEN-${data.unitNumber}` : 'HAVEN-3A'
+    };
+
+    setCurrentUser(newUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
+    setViewMode(newUser.role === 'tenant' ? 'tenant-portal' : 'landlord');
+    return newUser;
+  }, [isBackendOnline]);
 
   const logout = useCallback(() => {
     setCurrentUser(null);
+    setAuthError(null);
     try {
       localStorage.removeItem(STORAGE_KEYS.USER);
     } catch (e) {
@@ -690,7 +798,10 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const value = {
     currentUser,
     login,
+    register,
     logout,
+    authError,
+    clearAuthError,
     properties: enrichedProperties,
     units,
     tenants,

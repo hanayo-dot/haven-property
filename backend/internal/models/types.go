@@ -14,6 +14,7 @@ type User struct {
 	Name         string   `json:"name"`
 	Email        string   `json:"email"`
 	Phone        string   `json:"phone"`
+	Password     string   `json:"password,omitempty"`
 	Role         UserRole `json:"role"` // "landlord" | "tenant"
 	PropertyID   string   `json:"propertyId,omitempty"`
 	PropertyName string   `json:"propertyName,omitempty"`
@@ -22,6 +23,7 @@ type User struct {
 	RentAmount   *float64 `json:"rentAmount,omitempty"` // in KSh.
 	MpesaAccount string   `json:"mpesaAccount,omitempty"`
 	AvatarURL    string   `json:"avatarUrl,omitempty"`
+	CreatedAt    string   `json:"createdAt,omitempty"`
 }
 
 type IssueCategory string
@@ -225,10 +227,24 @@ type PortfolioStats struct {
 
 // Request and Response DTOs
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Name     string `json:"name,omitempty"`
-	Password string `json:"password,omitempty"`
-	Role     string `json:"role,omitempty"`
+	Identifier string `json:"identifier"` // Email OR Phone number
+	Email      string `json:"email,omitempty"`
+	Phone      string `json:"phone,omitempty"`
+	Password   string `json:"password,omitempty"`
+	Role       string `json:"role,omitempty"`
+	Name       string `json:"name,omitempty"`
+}
+
+type RegisterRequest struct {
+	Name         string   `json:"name"`
+	Email        string   `json:"email"`
+	Phone        string   `json:"phone"`
+	Password     string   `json:"password"`
+	Role         UserRole `json:"role"`
+	PropertyID   string   `json:"propertyId,omitempty"`
+	PropertyName string   `json:"propertyName,omitempty"`
+	UnitNumber   string   `json:"unitNumber,omitempty"`
+	RentAmount   *float64 `json:"rentAmount,omitempty"`
 }
 
 type LoginResponse struct {
@@ -244,9 +260,9 @@ type MpesaPaymentRequest struct {
 }
 
 type MpesaPaymentResponse struct {
-	Success        bool   `json:"success"`
-	ReceiptNumber  string `json:"receiptNumber"`
-	Message        string `json:"message"`
+	Success         bool   `json:"success"`
+	ReceiptNumber   string `json:"receiptNumber"`
+	Message         string `json:"message"`
 	TransactionTime string `json:"transactionTime"`
 }
 

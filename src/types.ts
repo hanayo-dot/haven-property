@@ -5,6 +5,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
+  password?: string;
   role: UserRole;
   avatarUrl?: string;
   // Tenant-specific fields
@@ -15,6 +16,18 @@ export interface User {
   rentAmount?: number;
   leaseEnd?: string;
   mpesaAccount?: string;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  role: UserRole;
+  propertyId?: string;
+  propertyName?: string;
+  unitNumber?: string;
+  rentAmount?: number;
 }
 
 export type IssueCategory = 

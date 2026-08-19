@@ -53,13 +53,27 @@ export const api = {
     return handleResponse<User[]>(res);
   },
 
-  async login(email: string, role?: string, name?: string): Promise<{ user: User; token: string }> {
+  async login(identifier: string, password?: string, role?: string, name?: string): Promise<{ user: User; token: string }> {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, role, name })
+      body: JSON.stringify({ identifier, password, role, name })
     });
     return handleResponse<{ user: User; token: string }>(res);
+  },
+
+  async register(data: Partial<User> & { password?: string }): Promise<{ user: User; token: string }> {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return handleResponse<{ user: User; token: string }>(res);
+  },
+
+  async getCurrentUser(identifier: string): Promise<User> {
+    const res = await fetch(`${API_BASE}/auth/me?identifier=${encodeURIComponent(identifier)}`);
+    return handleResponse<User>(res);
   },
 
   // Tenant Portal Specifics

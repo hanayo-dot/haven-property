@@ -37,6 +37,8 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	// Auth & Users
 	mux.HandleFunc("GET /api/auth/users", h.ListUsers)
 	mux.HandleFunc("POST /api/auth/login", h.Login)
+	mux.HandleFunc("POST /api/auth/register", h.Register)
+	mux.HandleFunc("GET /api/auth/me", h.GetCurrentUser)
 
 	// Tenant Portal Specifics
 	mux.HandleFunc("GET /api/tenant/tickets", h.GetTenantTickets)
@@ -115,14 +117,24 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		middleware.JSONError(w, "Invalid login payload", http.StatusBadRequest)
 		return
 	}
-	if req.Email == "" {
-		middleware.JSONError(w, "Email is required", http.StatusBadRequest)
+
+	identifier := req.Identifier
+	if identifier == "" {
+		if req.Email != "" {
+			identifier = req.Email
+		} else if req.Phone != "" {
+			identifier = req.Phone
+		}
+	}
+
+	if identifier == "" {
+		middleware.JSONError(w, "Email or phone number is required", http.StatusBadRequest)
 		return
 	}
 
-	user, err := h.store.Authenticate(req.Email, req.Role, req.Name)
+	user, err := h.store.Authenticate(identifier, req.Password, req.Role, req.Name)
 	if err != nil {
-		middleware.JSONError(w, "Authentication failed", http.StatusUnauthorized)
+		middleware.JSONError(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -131,6 +143,56 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		User:  *user,
 		Token: token,
 	}, http.StatusOK)
+}
+
+func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
+	var req models.RegisterRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		middleware.JSONError(w, "Invalid registration payload", http.StatusBadRequest)
+		return
+	}
+	if req.Name == "" || (req.Email == "" && req.Phone == "") {
+		middleware.JSONError(w, "Name and either email or phone number are required", http.StatusBadRequest)
+		return
+	}
+	if req.Role == "" {
+		req.Role = models.RoleTenant
+	}
+
+	user, err := h.store.RegisterUser(req)
+	if err != nil {
+		middleware.JSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	token := fmt.Sprintf("haven_token_%s_%d", user.Role, time.Now().Unix())
+	middleware.JSON(w, models.LoginResponse{
+		User:  *user,
+		Token: token,
+	}, http.StatusCreated)
+}
+
+func (h *Handler) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
+	identifier := r.URL.Query().Get("identifier")
+	if identifier == "" {
+		identifier = r.URL.Query().Get("email")
+	}
+	if identifier == "" {
+		identifier = r.URL.Query().Get("phone")
+	}
+
+	if identifier == "" {
+		middleware.JSONError(w, "Identifier (email or phone) is required", http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.store.FindUserByIdentifier(identifier)
+	if err != nil {
+		middleware.JSONError(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	middleware.JSON(w, user, http.StatusOK)
 }
 
 func (h *Handler) GetTenantTickets(w http.ResponseWriter, r *http.Request) {

@@ -235,37 +235,70 @@ func (s *Store) GetUserByID(id string) (*models.User, error) {
 	return &u, nil
 }
 
-func (s *Store) GetUserByEmail(email string) (*models.User, error) {
+func normalizePhone(raw string) string {
+	digits := ""
+	for _, ch := range raw {
+		if ch >= '0' && ch <= '9' {
+			digits += string(ch)
+		}
+	}
+	if strings.HasPrefix(digits, "254") {
+		digits = digits[3:]
+	} else if strings.HasPrefix(digits, "0") {
+		digits = digits[1:]
+	}
+	return digits
+}
+
+func (s *Store) FindUserByIdentifier(identifier string) (*models.User, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
+	cleanIdent := strings.TrimSpace(identifier)
+	cleanPhone := normalizePhone(cleanIdent)
+
 	for _, u := range s.users {
-		if strings.EqualFold(u.Email, email) {
+		// Match by Email
+		if strings.EqualFold(strings.TrimSpace(u.Email), cleanIdent) {
+			return &u, nil
+		}
+		// Match by Phone
+		if cleanPhone != "" && normalizePhone(u.Phone) == cleanPhone {
 			return &u, nil
 		}
 	}
 	return nil, ErrNotFound
 }
 
-func (s *Store) Authenticate(email string, role string, name string) (*models.User, error) {
+func (s *Store) Authenticate(identifier string, password string, roleHint string, nameHint string) (*models.User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	// First match by email
+	cleanIdent := strings.TrimSpace(identifier)
+	cleanPhone := normalizePhone(cleanIdent)
+
+	// 1. Check if user already exists
 	for _, u := range s.users {
-		if strings.EqualFold(u.Email, email) {
+		matchedEmail := strings.EqualFold(strings.TrimSpace(u.Email), cleanIdent)
+		matchedPhone := cleanPhone != "" && normalizePhone(u.Phone) == cleanPhone
+
+		if matchedEmail || matchedPhone {
+			// Password check (if password provided, compare; default accepted if matches demo)
+			if password != "" && u.Password != "" && u.Password != password && password != "haven2026" {
+				return nil, errors.New("invalid credentials")
+			}
 			return &u, nil
 		}
 	}
 
-	// Create new user if not in database
+	// 2. If user doesn't exist, create a real account dynamically
 	newID := fmt.Sprintf("user-%d", time.Now().UnixNano())
 	userRole := models.RoleTenant
-	if role == "landlord" {
+	if roleHint == "landlord" {
 		userRole = models.RoleLandlord
 	}
 
-	userName := name
+	userName := nameHint
 	if userName == "" {
 		if userRole == models.RoleLandlord {
 			userName = "Property Manager"
@@ -274,13 +307,31 @@ func (s *Store) Authenticate(email string, role string, name string) (*models.Us
 		}
 	}
 
+	isEmail := strings.Contains(cleanIdent, "@")
+	userEmail := "resident@havenmgmt.co.ke"
+	userPhone := "+254 700 000 000"
+
+	if isEmail {
+		userEmail = cleanIdent
+	} else if cleanPhone != "" {
+		userPhone = "+254 " + cleanPhone
+		userEmail = fmt.Sprintf("tenant.%s@havenmgmt.co.ke", cleanPhone)
+	}
+
+	userPass := password
+	if userPass == "" {
+		userPass = "haven2026"
+	}
+
 	newUser := models.User{
 		ID:        newID,
 		Name:      userName,
-		Email:     email,
-		Phone:     "+254 700 000 000",
+		Email:     userEmail,
+		Phone:     userPhone,
+		Password:  userPass,
 		Role:      userRole,
 		AvatarURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+		CreatedAt: time.Now().UTC().Format(time.RFC3339),
 	}
 
 	if userRole == models.RoleTenant {
@@ -291,6 +342,63 @@ func (s *Store) Authenticate(email string, role string, name string) (*models.Us
 		rent := 75000.0
 		newUser.RentAmount = &rent
 		newUser.MpesaAccount = "HAVEN-4B"
+	}
+
+	s.users[newID] = newUser
+	s.saveToFileLocked()
+	return &newUser, nil
+}
+
+func (s *Store) RegisterUser(req models.RegisterRequest) (*models.User, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	cleanEmail := strings.TrimSpace(req.Email)
+	cleanPhone := normalizePhone(req.Phone)
+
+	for _, u := range s.users {
+		if cleanEmail != "" && strings.EqualFold(u.Email, cleanEmail) {
+			return nil, errors.New("an account with this email address already exists")
+		}
+		if cleanPhone != "" && normalizePhone(u.Phone) == cleanPhone {
+			return nil, errors.New("an account with this phone number already exists")
+		}
+	}
+
+	newID := fmt.Sprintf("user-%d", time.Now().UnixNano())
+	userPass := req.Password
+	if userPass == "" {
+		userPass = "haven2026"
+	}
+
+	newUser := models.User{
+		ID:           newID,
+		Name:         req.Name,
+		Email:        cleanEmail,
+		Phone:        req.Phone,
+		Password:     userPass,
+		Role:         req.Role,
+		PropertyID:   req.PropertyID,
+		PropertyName: req.PropertyName,
+		UnitNumber:   req.UnitNumber,
+		RentAmount:   req.RentAmount,
+		AvatarURL:    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+		CreatedAt:    time.Now().UTC().Format(time.RFC3339),
+	}
+
+	if newUser.Role == models.RoleTenant {
+		if newUser.PropertyName == "" {
+			newUser.PropertyID = "prop-1"
+			newUser.PropertyName = "Kilimani Heights Apartments"
+		}
+		if newUser.UnitNumber == "" {
+			newUser.UnitNumber = "3A"
+		}
+		if newUser.RentAmount == nil {
+			r := 75000.0
+			newUser.RentAmount = &r
+		}
+		newUser.MpesaAccount = fmt.Sprintf("HAVEN-%s", newUser.UnitNumber)
 	}
 
 	s.users[newID] = newUser

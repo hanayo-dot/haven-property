@@ -119,10 +119,10 @@ func TestAuthAndLogin(t *testing.T) {
 		t.Errorf("expected landlord role, got %s", landlordResp.User.Role)
 	}
 
-	// 3. Login Tenant
+	// 3. Login Tenant by Email
 	tenantLoginBody, _ := json.Marshal(models.LoginRequest{
-		Email: "juma.ochieng@gmail.com",
-		Role:  "tenant",
+		Identifier: "juma.ochieng@gmail.com",
+		Password:   "haven2026",
 	})
 	req = httptest.NewRequest("POST", "/api/auth/login", bytes.NewBuffer(tenantLoginBody))
 	w = httptest.NewRecorder()
@@ -139,6 +139,53 @@ func TestAuthAndLogin(t *testing.T) {
 	}
 	if tenantResp.User.UnitNumber != "4B" {
 		t.Errorf("expected unit 4B, got %s", tenantResp.User.UnitNumber)
+	}
+
+	// 4. Login Tenant by Kenyan Phone Number (0712345678)
+	phoneLoginBody, _ := json.Marshal(models.LoginRequest{
+		Identifier: "0712345678",
+		Password:   "haven2026",
+	})
+	req = httptest.NewRequest("POST", "/api/auth/login", bytes.NewBuffer(phoneLoginBody))
+	w = httptest.NewRecorder()
+	mux.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+
+	var phoneResp models.LoginResponse
+	_ = json.NewDecoder(w.Body).Decode(&phoneResp)
+	if phoneResp.User.Name != "Juma Ochieng" {
+		t.Errorf("expected Juma Ochieng from phone login, got %s", phoneResp.User.Name)
+	}
+
+	// 5. Register a brand new resident
+	regBody, _ := json.Marshal(models.RegisterRequest{
+		Name:         "Grace Wangari",
+		Email:        "grace.w@gmail.com",
+		Phone:        "+254 799 111 222",
+		Password:     "secretpass",
+		Role:         models.RoleTenant,
+		PropertyID:   "prop-1",
+		PropertyName: "Kilimani Heights Apartments",
+		UnitNumber:   "5A",
+	})
+	req = httptest.NewRequest("POST", "/api/auth/register", bytes.NewBuffer(regBody))
+	w = httptest.NewRecorder()
+	mux.ServeHTTP(w, req)
+
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201 created, got %d", w.Code)
+	}
+
+	var regResp models.LoginResponse
+	_ = json.NewDecoder(w.Body).Decode(&regResp)
+	if regResp.User.Name != "Grace Wangari" {
+		t.Errorf("expected Grace Wangari, got %s", regResp.User.Name)
+	}
+	if regResp.User.UnitNumber != "5A" {
+		t.Errorf("expected unit 5A, got %s", regResp.User.UnitNumber)
 	}
 }
 
