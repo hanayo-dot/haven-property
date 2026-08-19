@@ -138,9 +138,9 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.USER);
-      return saved ? JSON.parse(saved) : DEMO_USERS[0];
+      return saved ? JSON.parse(saved) : null;
     } catch {
-      return DEMO_USERS[0];
+      return null;
     }
   });
 
@@ -318,8 +318,14 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const logout = useCallback(() => {
     setCurrentUser(null);
     setAuthError(null);
+    setViewMode('landlord');
     try {
       localStorage.removeItem(STORAGE_KEYS.USER);
+      sessionStorage.clear();
+      // Clean URL params if any
+      if (window.location.search) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
     } catch (e) {
       console.warn('Failed to clear user from storage:', e);
     }

@@ -25,21 +25,17 @@ const MainAppContent: React.FC = () => {
     setIsReportModalOpen 
   } = useProperty();
 
-  // Detect QR code / deep link params on load
+  // Detect QR code / deep link params on load if already authenticated
   useEffect(() => {
     try {
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.get('portal') === 'tenant-portal' || searchParams.has('report') || searchParams.has('unit')) {
         setViewMode('tenant-portal');
-        if (!currentUser) {
-          // Default to first tenant demo user
-          login(DEMO_USERS[1]);
-        }
       }
     } catch (e) {
       console.warn('URL param parse error:', e);
     }
-  }, [setViewMode, currentUser, login]);
+  }, [setViewMode]);
 
   // If not logged in, render the Login Page
   if (!currentUser) {

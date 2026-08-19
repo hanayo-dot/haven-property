@@ -219,6 +219,16 @@ export const Header: React.FC = () => {
               )}
             </div>
 
+            {/* Quick 1-Click Direct Logout Button */}
+            <button
+              id="header-direct-logout-btn"
+              onClick={logout}
+              title="Log out completely and return to Login screen"
+              className="flex items-center space-x-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-[#FAF8F5] hover:bg-[#FBF1EE] text-[#8C8880] hover:text-[#D17A5E] border border-[#EDE8DF] hover:border-[#D17A5E]/30 transition shadow-2xs active:scale-95"
+            >
+              <LogOut className="w-3.5 h-3.5 text-[#D17A5E]" />
+              <span className="hidden sm:inline">Log Out</span>
+            </button>
           </div>
         </div>
 

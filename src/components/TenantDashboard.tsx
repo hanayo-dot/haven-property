@@ -18,7 +18,8 @@ import {
   ShieldCheck,
   Send,
   Loader2,
-  Download
+  Download,
+  LogOut
 } from 'lucide-react';
 import { useProperty } from '../context/PropertyContext';
 import { TenantReportPortal } from './TenantReportPortal';
@@ -28,6 +29,7 @@ import { api } from '../services/api';
 export const TenantDashboard: React.FC = () => {
   const { 
     currentUser, 
+    logout,
     maintenanceRequests, 
     properties, 
     units, 
@@ -135,6 +137,15 @@ export const TenantDashboard: React.FC = () => {
             >
               <CreditCard className="w-4 h-4 text-[#C4D0C4]" />
               <span>M-Pesa Paybill</span>
+            </button>
+
+            <button
+              id="tenant-banner-logout-btn"
+              onClick={logout}
+              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-[#D17A5E] text-white text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5"
+            >
+              <LogOut className="w-4 h-4 text-[#F5D8CF]" />
+              <span>Log Out</span>
             </button>
           </div>
         </div>
