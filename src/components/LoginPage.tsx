@@ -18,16 +18,27 @@ import {
   EyeOff,
   AlertCircle,
   Loader2,
-  UserPlus
+  UserPlus,
+  X
 } from 'lucide-react';
 import { User, UserRole } from '../types';
 import { DEMO_USERS } from '../data/mockData';
 import { useProperty } from '../context/PropertyContext';
 
-export const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  initialMode?: 'signin' | 'signup';
+  isModal?: boolean;
+  onClose?: () => void;
+}
+
+export const LoginPage: React.FC<LoginPageProps> = ({ 
+  initialMode = 'signin', 
+  isModal = false, 
+  onClose 
+}) => {
   const { login, register, authError, clearAuthError, properties } = useProperty();
   
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>(initialMode);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('haven2026');
   const [showPassword, setShowPassword] = useState(false);
@@ -111,90 +122,71 @@ export const LoginPage: React.FC = () => {
     setLocalError(null);
   };
 
-  return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2C362C] flex flex-col justify-between selection:bg-[#5A6D5A] selection:text-white relative overflow-hidden">
-      {/* Ambient background glows for glassmorphic depth */}
-      <div className="ambient-glow-1" />
-      <div className="ambient-glow-2" />
-      <div className="ambient-glow-3" />
+  const content = (
+    <div className="relative glass-modal rounded-[36px] overflow-hidden border border-white/80">
+      {isModal && onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 p-2 rounded-full text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition z-20"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      )}
 
-      {/* Top Simple Brand Bar */}
-      <header className="relative z-10 px-6 sm:px-10 py-6 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#2C362C]/95 text-[#E5E1D8] flex items-center justify-center shadow-xs backdrop-blur-md">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="font-serif font-bold text-xl tracking-tight text-[#2C362C]">Haven</span>
-            <span className="text-[10px] ml-2 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#EDE8DF]/70 text-[#5A6D5A]">
-              Kenya OS
-            </span>
-          </div>
+      <div className="p-7 sm:p-10 space-y-8">
+        
+        {/* Header Text */}
+        <div className="text-center space-y-2 max-w-xl mx-auto">
+          <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#0B57D0]/10 border border-[#0B57D0]/20 text-[#0B57D0] backdrop-blur-xs">
+            Secure Kenyan Property Portal
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-serif text-[#0F172A] tracking-tight">
+            {authMode === 'signin' ? 'Sign In to Your Account' : 'Create an Account'}
+          </h1>
+          <p className="text-xs sm:text-sm text-[#64748B]">
+            {authMode === 'signin' 
+              ? 'Enter your email address or Kenyan phone number (+254 / 07...) to access your dedicated portal.'
+              : 'Register as a Resident or Landlord with Nairobi property linking.'}
+          </p>
         </div>
 
-        <div className="text-xs text-[#8C8880] font-medium hidden sm:block">
-          Nairobi • Kilimani • Westlands • Kileleshwa
+        {/* Mode Switcher Tabs */}
+        <div className="flex justify-center">
+          <div className="glass-pill p-1 rounded-2xl inline-flex space-x-1">
+            <button
+              type="button"
+              id="tab-signin-btn"
+              onClick={() => {
+                setAuthMode('signin');
+                setLocalError(null);
+                clearAuthError();
+              }}
+              className={`px-6 py-2 rounded-xl text-xs font-semibold transition ${
+                authMode === 'signin'
+                  ? 'bg-[#0045A5] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#0F172A]'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              id="tab-signup-btn"
+              onClick={() => {
+                setAuthMode('signup');
+                setLocalError(null);
+                clearAuthError();
+              }}
+              className={`px-6 py-2 rounded-xl text-xs font-semibold transition ${
+                authMode === 'signup'
+                  ? 'bg-[#0045A5] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#0F172A]'
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
         </div>
-      </header>
-
-      {/* Main Login Card */}
-      <main className="relative z-10 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6">
-        <div className="glass-modal rounded-[36px] overflow-hidden border border-white/80">
-          
-          <div className="p-7 sm:p-10 space-y-8">
-            
-            {/* Header Text */}
-            <div className="text-center space-y-2 max-w-xl mx-auto">
-              <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#F2F6F2]/80 border border-[#5A6D5A]/20 text-[#4A5D4A] backdrop-blur-xs">
-                Secure Kenyan Property Portal
-              </span>
-              <h1 className="text-3xl sm:text-4xl font-serif text-[#2C362C] tracking-tight">
-                {authMode === 'signin' ? 'Sign In to Your Account' : 'Create a Haven Account'}
-              </h1>
-              <p className="text-xs sm:text-sm text-[#8C8880]">
-                {authMode === 'signin' 
-                  ? 'Enter your email address or Kenyan phone number (+254 / 07...) to access your dedicated portal.'
-                  : 'Register as a Resident or Landlord with Nairobi property linking.'}
-              </p>
-            </div>
-
-            {/* Mode Switcher Tabs */}
-            <div className="flex justify-center">
-              <div className="glass-pill p-1 rounded-2xl inline-flex space-x-1">
-                <button
-                  type="button"
-                  id="tab-signin-btn"
-                  onClick={() => {
-                    setAuthMode('signin');
-                    setLocalError(null);
-                    clearAuthError();
-                  }}
-                  className={`px-6 py-2 rounded-xl text-xs font-semibold transition ${
-                    authMode === 'signin'
-                      ? 'bg-white text-[#2C362C] shadow-xs'
-                      : 'text-[#8C8880] hover:text-[#2C362C]'
-                  }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  id="tab-signup-btn"
-                  onClick={() => {
-                    setAuthMode('signup');
-                    setLocalError(null);
-                    clearAuthError();
-                  }}
-                  className={`px-6 py-2 rounded-xl text-xs font-semibold transition ${
-                    authMode === 'signup'
-                      ? 'bg-white text-[#2C362C] shadow-xs'
-                      : 'text-[#8C8880] hover:text-[#2C362C]'
-                  }`}
-                >
-                  Create Account
-                </button>
-              </div>
-            </div>
 
             {/* Error Message Display */}
             {(localError || authError) && (
@@ -546,22 +538,63 @@ export const LoginPage: React.FC = () => {
           {/* Footer Info Strip */}
           <div className="bg-[#FAF8F5] border-t border-[#EDE8DF] px-8 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C8880] gap-2">
             <div className="flex items-center space-x-2">
-              <ShieldCheck className="w-4 h-4 text-[#5A6D5A]" />
+              <ShieldCheck className="w-4 h-4 text-[#0045A5]" />
               <span>Full session persistence enabled with Go file-backed JSON database</span>
             </div>
             <div className="text-[11px]">
               Currency: <strong>KSh (Kenyan Shillings)</strong> • M-Pesa Integrated
             </div>
-          </div>
-
         </div>
+      </div>
+  );
+
+  if (isModal) {
+    return (
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fadeIn"
+      >
+        <div 
+          onClick={e => e.stopPropagation()}
+          className="max-w-4xl w-full my-auto"
+        >
+          {content}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#FDFBF7] text-[#1E293B] flex flex-col justify-between selection:bg-[#0045A5] selection:text-white relative overflow-hidden">
+      <div className="ambient-glow-1" />
+      <div className="ambient-glow-2" />
+      <div className="ambient-glow-3" />
+
+      <header className="relative z-10 px-6 sm:px-10 py-6 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#0045A5] text-white flex items-center justify-center shadow-xs">
+            <Building2 className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="font-bold text-xl tracking-tight text-[#0F172A]">EstateFlow</span>
+            <span className="text-[10px] ml-2 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#CBD5E1] text-[#0045A5]">
+              Kenya OS
+            </span>
+          </div>
+        </div>
+
+        <div className="text-xs text-[#64748B] font-medium hidden sm:block">
+          Nairobi • Kilimani • Westlands • Kileleshwa
+        </div>
+      </header>
+
+      <main className="relative z-10 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6">
+        {content}
       </main>
 
-      {/* Bottom Footer */}
-      <footer className="py-6 text-center text-xs text-[#8C8880]">
-        &copy; {new Date().getFullYear()} Haven Property Management OS — Nairobi, Kenya.
+      <footer className="py-6 text-center text-xs text-[#64748B]">
+        &copy; 2024 EstateFlow Management Systems. All rights reserved.
       </footer>
-
     </div>
   );
 };

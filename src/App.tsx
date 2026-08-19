@@ -12,6 +12,7 @@ import { PhotoViewerModal } from './components/PhotoViewerModal';
 import { TenantReportPortal } from './components/TenantReportPortal';
 import { NewPropertyModal } from './components/NewPropertyModal';
 import { TenantLinkModal } from './components/TenantLinkModal';
+import { LandingPage } from './components/LandingPage';
 import { DEMO_USERS } from './data/mockData';
 
 const MainAppContent: React.FC = () => {
@@ -25,6 +26,8 @@ const MainAppContent: React.FC = () => {
     setIsReportModalOpen 
   } = useProperty();
 
+  const [authModalMode, setAuthModalMode] = React.useState<'signin' | 'signup' | null>(null);
+
   // Detect QR code / deep link params on load if already authenticated
   useEffect(() => {
     try {
@@ -37,9 +40,20 @@ const MainAppContent: React.FC = () => {
     }
   }, [setViewMode]);
 
-  // If not logged in, render the Login Page
+  // If not logged in, render the EstateFlow Landing Page with modal login
   if (!currentUser) {
-    return <LoginPage />;
+    return (
+      <>
+        <LandingPage onOpenAuth={(mode) => setAuthModalMode(mode)} />
+        {authModalMode && (
+          <LoginPage 
+            isModal 
+            initialMode={authModalMode} 
+            onClose={() => setAuthModalMode(null)} 
+          />
+        )}
+      </>
+    );
   }
 
   const isTenantView = currentUser.role === 'tenant' || viewMode === 'tenant-portal';

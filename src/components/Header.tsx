@@ -58,13 +58,13 @@ export const Header: React.FC = () => {
           
           {/* Brand & Logo */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#2C362C]/95 text-[#E5E1D8] flex items-center justify-center shadow-xs backdrop-blur-md">
-              <Building2 className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl bg-[#0045A5] text-white flex items-center justify-center shadow-xs">
+              <Building2 className="w-4.5 h-4.5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-serif font-bold text-lg tracking-tight text-[#2C362C]">Haven</span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#EDE8DF]/70 text-[#5A6D5A]">
+                <span className="font-bold text-lg tracking-tight text-[#0F172A]">EstateFlow</span>
+                <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#CBD5E1] text-[#0045A5]">
                   Kenya
                 </span>
                 {isBackendOnline && (
