@@ -1,0 +1,6 @@
+{
+  "name": "Haven Property & Tenant Maintenance",
+  "description": "Streamlined property and apartment management for landlords, featuring instant photo-enabled maintenance and breakage reporting for tenants.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
