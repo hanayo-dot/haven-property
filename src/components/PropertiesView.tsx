@@ -106,10 +106,10 @@ export const PropertiesView: React.FC<PropertiesViewProps> = () => {
             <div
               key={property.id}
               onClick={() => setSelectedPropertyId(property.id)}
-              className={`group rounded-[24px] overflow-hidden bg-white border transition-all duration-200 cursor-pointer shadow-[0_2px_12px_rgba(0,0,0,0.02)] ${
+              className={`group rounded-[24px] overflow-hidden glass-card glass-card-hover border transition-all duration-200 cursor-pointer ${
                 isSelected
-                  ? 'border-[#5A6D5A] ring-2 ring-[#5A6D5A]/20 shadow-[0_8px_24px_rgba(90,109,90,0.08)]'
-                  : 'border-[#EDE8DF]/90 hover:border-[#5A6D5A]/40 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)]'
+                  ? 'border-[#5A6D5A] ring-2 ring-[#5A6D5A]/20 shadow-[0_12px_32px_rgba(90,109,90,0.12)]'
+                  : 'border-white/80'
               }`}
             >
               {/* Image & Badges */}
@@ -173,7 +173,7 @@ export const PropertiesView: React.FC<PropertiesViewProps> = () => {
 
       {/* Selected Property Deep Dive & Units Table */}
       {activeProperty && (
-        <div className="p-6 sm:p-7 rounded-[28px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-5">
+        <div className="p-6 sm:p-7 rounded-[28px] glass-card border border-white/80 space-y-5">
           
           {/* Header of Active Property */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#F5F2EC]">

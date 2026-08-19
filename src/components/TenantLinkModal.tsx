@@ -56,12 +56,12 @@ export const TenantLinkModal: React.FC = () => {
     <div 
       id="tenant-link-backdrop"
       onClick={() => setIsTenantLinkModalOpen(false)}
-      className="fixed inset-0 z-50 bg-[#2C362C]/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-[#2C362C]/50 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
     >
       <div 
         id="tenant-link-modal"
         onClick={e => e.stopPropagation()}
-        className="bg-white border border-[#ECE9E1] rounded-[36px] max-w-lg w-full p-7 space-y-6 shadow-2xl my-auto text-[#2C362C] animate-fadeIn"
+        className="glass-modal rounded-[36px] max-w-lg w-full p-7 space-y-6 shadow-2xl my-auto text-[#2C362C] animate-fadeIn border border-white/90"
       >
         <div className="flex items-center justify-between pb-4 border-b border-[#ECE9E1]">
           <div className="flex items-center space-x-3">

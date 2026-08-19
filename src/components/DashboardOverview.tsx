@@ -228,7 +228,7 @@ export const DashboardOverview: React.FC = () => {
                   setSelectedRequestId(req.id);
                   setActiveTab('maintenance');
                 }}
-                className="group p-4 sm:p-5 rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-[#5A6D5A]/40 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition cursor-pointer flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
+                className="group p-4 sm:p-5 rounded-[22px] glass-card glass-card-hover border border-white/80 transition cursor-pointer flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
               >
                 {/* Photo and Details */}
                 <div className="flex items-start space-x-3.5 flex-1 min-w-0">
@@ -298,7 +298,7 @@ export const DashboardOverview: React.FC = () => {
         <div className="space-y-5">
           
           {/* Properties Snapshot in Nairobi */}
-          <div className="p-6 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4">
+          <div className="p-6 rounded-[24px] glass-card border border-white/80 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-serif font-bold text-sm text-[#2C362C] flex items-center space-x-2">
                 <Building2 className="w-4 h-4 text-[#5A6D5A]" />
@@ -327,7 +327,7 @@ export const DashboardOverview: React.FC = () => {
                       setSelectedPropertyId(property.id);
                       setActiveTab('properties');
                     }}
-                    className="p-3.5 rounded-xl bg-[#FAF8F5] border border-[#EDE8DF]/80 hover:border-[#5A6D5A]/40 transition cursor-pointer space-y-2"
+                    className="p-3.5 rounded-xl bg-white/70 border border-[#EDE8DF]/70 hover:border-[#5A6D5A]/40 transition cursor-pointer space-y-2"
                   >
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-semibold text-[#2C362C] truncate max-w-[180px]">
@@ -359,7 +359,7 @@ export const DashboardOverview: React.FC = () => {
           </div>
 
           {/* Scheduled Fundi Visits Card */}
-          <div className="p-6 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
+          <div className="p-6 rounded-[24px] glass-card border border-white/80 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-serif font-bold text-sm text-[#2C362C] flex items-center space-x-2">
                 <Truck className="w-4 h-4 text-[#5A6D5A]" />

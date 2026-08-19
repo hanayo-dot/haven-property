@@ -53,7 +53,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
     <div
       id={id}
       onClick={onClick}
-      className={`group relative p-6 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] transition-all duration-200 ${
+      className={`group relative p-6 rounded-[24px] glass-card glass-card-hover border border-white/80 transition-all duration-200 ${
         onClick ? `cursor-pointer ${selectedColor.ring} active:scale-[0.99]` : ''
       }`}
     >

@@ -45,12 +45,17 @@ const MainAppContent: React.FC = () => {
   const isTenantView = currentUser.role === 'tenant' || viewMode === 'tenant-portal';
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2C362C] antialiased flex flex-col font-sans selection:bg-[#5A6D5A] selection:text-white">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#2C362C] antialiased flex flex-col font-sans selection:bg-[#5A6D5A] selection:text-white relative overflow-hidden">
+      {/* Subtle Ambient Mesh Glows for Glassmorphism Depth */}
+      <div className="ambient-glow-1" />
+      <div className="ambient-glow-2" />
+      <div className="ambient-glow-3" />
+
       {/* Top Global Navigation Bar */}
       <Header />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
+      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
         {isTenantView ? (
           /* Dedicated Kenyan Resident Dashboard & M-Pesa Hub */
           <div className="animate-fadeIn">

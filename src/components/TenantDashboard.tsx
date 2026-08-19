@@ -154,7 +154,7 @@ export const TenantDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Sub-Tabs for Tenant */}
-      <div className="flex items-center space-x-1 bg-white p-1 rounded-2xl border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-x-auto no-scrollbar">
+      <div className="flex items-center space-x-1 glass-panel p-1.5 rounded-2xl border border-white/80 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveSubTab('overview')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
@@ -220,7 +220,7 @@ export const TenantDashboard: React.FC = () => {
                 {myRequests.map(req => (
                   <div
                     key={req.id}
-                    className="p-5 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3"
+                    className="p-5 rounded-[24px] glass-card glass-card-hover border border-white/80 space-y-3"
                   >
                     {/* Header: Ticket & Status */}
                     <div className="flex items-center justify-between">
@@ -332,7 +332,7 @@ export const TenantDashboard: React.FC = () => {
           <div className="space-y-5">
             
             {/* Rent & M-Pesa Summary Card */}
-            <div className="p-6 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4">
+            <div className="p-6 rounded-[24px] glass-card border border-white/80 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif font-bold text-sm text-[#2C362C]">
                   Lease & Monthly Rent
@@ -342,7 +342,7 @@ export const TenantDashboard: React.FC = () => {
                 </span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#EDE8DF] space-y-2">
+              <div className="p-4 rounded-2xl bg-white/70 border border-[#EDE8DF]/70 space-y-2">
                 <div className="text-xs text-[#8C8880]">Monthly Rent:</div>
                 <div className="text-2xl font-serif font-bold text-[#2C362C]">
                   KSh {rentAmount.toLocaleString()}
@@ -362,13 +362,13 @@ export const TenantDashboard: React.FC = () => {
             </div>
 
             {/* Estate Caretaker Card */}
-            <div className="p-6 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
+            <div className="p-6 rounded-[24px] glass-card border border-white/80 space-y-3">
               <h3 className="font-serif font-bold text-sm text-[#2C362C] flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-[#5A6D5A]" />
                 <span>Caretaker & Assistance</span>
               </h3>
 
-              <div className="p-3.5 rounded-xl bg-[#FAF8F5] border border-[#EDE8DF] space-y-1.5 text-xs">
+              <div className="p-3.5 rounded-xl bg-white/70 border border-[#EDE8DF]/70 space-y-1.5 text-xs">
                 <p className="font-semibold text-[#2C362C]">{property.caretakerContact?.name || 'Mwangi Kamau (Caretaker)'}</p>
                 <p className="text-[#8C8880] text-[11px]">Phone: {property.caretakerContact?.phone || '+254 722 123 456'}</p>
                 
@@ -399,14 +399,14 @@ export const TenantDashboard: React.FC = () => {
 
       {/* Sub-View: Report Breakage */}
       {activeSubTab === 'report' && (
-        <div className="bg-white rounded-[28px] border border-[#EDE8DF] p-6 shadow-sm">
+        <div className="glass-card rounded-[28px] border border-white/80 p-6 shadow-sm">
           <TenantReportPortal />
         </div>
       )}
 
       {/* Sub-View: M-Pesa Rent Payment Simulator */}
       {activeSubTab === 'mpesa' && (
-        <div className="max-w-xl mx-auto p-7 sm:p-8 bg-white rounded-[32px] border border-[#EDE8DF] shadow-md space-y-6 animate-fadeIn">
+        <div className="max-w-xl mx-auto p-7 sm:p-8 glass-modal rounded-[32px] border border-white/90 space-y-6 animate-fadeIn">
           <div className="text-center space-y-2">
             <div className="w-12 h-12 rounded-2xl bg-[#00A859]/10 text-[#00A859] flex items-center justify-center mx-auto">
               <CreditCard className="w-6 h-6" />

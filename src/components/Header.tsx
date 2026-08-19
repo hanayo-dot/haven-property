@@ -52,23 +52,23 @@ export const Header: React.FC = () => {
   const isLandlord = currentUser?.role === 'landlord';
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-[#EDE8DF]/90 text-[#2C362C]">
+    <header className="sticky top-0 z-30 glass-header text-[#2C362C]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18">
           
           {/* Brand & Logo */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#2C362C] flex items-center justify-center text-[#E5E1D8] shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#2C362C]/95 text-[#E5E1D8] flex items-center justify-center shadow-xs backdrop-blur-md">
               <Building2 className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-serif font-bold text-lg tracking-tight text-[#2C362C]">Haven</span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#F2EFEA] text-[#5A6D5A]">
+                <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#EDE8DF]/70 text-[#5A6D5A]">
                   Kenya
                 </span>
                 {isBackendOnline && (
-                  <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-[#E8F2E8] text-[#3D783D] hidden sm:inline-block">
+                  <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-[#E8F2E8]/80 text-[#3D783D] border border-[#3D783D]/20 hidden sm:inline-block">
                     Go API Active
                   </span>
                 )}
@@ -78,13 +78,13 @@ export const Header: React.FC = () => {
 
           {/* Center Badge: For Landlord, shows switcher; for Resident, shows their apartment location */}
           {isLandlord ? (
-            <div className="flex items-center bg-[#F2EFEA] p-1 rounded-xl">
+            <div className="flex items-center glass-pill p-1 rounded-xl">
               <button
                 id="switch-landlord-mode-btn"
                 onClick={() => setViewMode('landlord')}
                 className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                   viewMode === 'landlord'
-                    ? 'bg-white text-[#2C362C] shadow-xs'
+                    ? 'bg-white/95 text-[#2C362C] shadow-xs'
                     : 'text-[#8C8880] hover:text-[#2C362C]'
                 }`}
               >
@@ -105,7 +105,7 @@ export const Header: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5] border border-[#EDE8DF] text-xs">
+            <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full glass-pill text-xs">
               <Home className="w-3.5 h-3.5 text-[#5A6D5A]" />
               <span className="font-semibold text-[#2C362C]">
                 {currentUser?.propertyName?.split(' ')[0]} • Unit {currentUser?.unitNumber}
@@ -134,7 +134,7 @@ export const Header: React.FC = () => {
                 id="reset-demo-btn"
                 onClick={resetToDemoData}
                 title="Reset Kenyan demo database"
-                className="p-2 text-[#8C8880] hover:text-[#2C362C] hover:bg-[#F5F2EC] rounded-xl transition"
+                className="p-2 text-[#8C8880] hover:text-[#2C362C] hover:bg-white/60 rounded-xl transition"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -145,7 +145,7 @@ export const Header: React.FC = () => {
               <button
                 id="user-profile-menu-btn"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 p-1.5 rounded-xl bg-white border border-[#EDE8DF] hover:border-[#5A6D5A]/40 transition shadow-2xs"
+                className="flex items-center space-x-2 p-1.5 rounded-xl glass-pill hover:border-[#5A6D5A]/40 transition shadow-2xs"
               >
                 {currentUser?.avatarUrl ? (
                   <img
@@ -174,7 +174,7 @@ export const Header: React.FC = () => {
                 <div 
                   id="user-profile-dropdown"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-[#EDE8DF] shadow-xl p-3 space-y-2 z-50 animate-fadeIn"
+                  className="absolute right-0 mt-2 w-64 rounded-2xl glass-modal p-3 space-y-2 z-50 animate-fadeIn"
                 >
                   <div className="px-2 py-1.5 border-b border-[#F5F2EC]">
                     <p className="text-xs font-bold text-[#2C362C] truncate">{currentUser?.name}</p>

@@ -112,17 +112,21 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2C362C] flex flex-col justify-between selection:bg-[#5A6D5A] selection:text-white">
-      
+    <div className="min-h-screen bg-[#FDFBF7] text-[#2C362C] flex flex-col justify-between selection:bg-[#5A6D5A] selection:text-white relative overflow-hidden">
+      {/* Ambient background glows for glassmorphic depth */}
+      <div className="ambient-glow-1" />
+      <div className="ambient-glow-2" />
+      <div className="ambient-glow-3" />
+
       {/* Top Simple Brand Bar */}
-      <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
+      <header className="relative z-10 px-6 sm:px-10 py-6 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#2C362C] text-[#E5E1D8] flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-2xl bg-[#2C362C]/95 text-[#E5E1D8] flex items-center justify-center shadow-xs backdrop-blur-md">
             <Building2 className="w-5 h-5" />
           </div>
           <div>
             <span className="font-serif font-bold text-xl tracking-tight text-[#2C362C]">Haven</span>
-            <span className="text-[10px] ml-2 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#F2EFEA] text-[#5A6D5A]">
+            <span className="text-[10px] ml-2 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#EDE8DF]/70 text-[#5A6D5A]">
               Kenya OS
             </span>
           </div>
@@ -134,14 +138,14 @@ export const LoginPage: React.FC = () => {
       </header>
 
       {/* Main Login Card */}
-      <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-6">
-        <div className="bg-white border border-[#EDE8DF] rounded-[36px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] overflow-hidden">
+      <main className="relative z-10 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6">
+        <div className="glass-modal rounded-[36px] overflow-hidden border border-white/80">
           
           <div className="p-7 sm:p-10 space-y-8">
             
             {/* Header Text */}
             <div className="text-center space-y-2 max-w-xl mx-auto">
-              <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#F2F6F2] text-[#4A5D4A]">
+              <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#F2F6F2]/80 border border-[#5A6D5A]/20 text-[#4A5D4A] backdrop-blur-xs">
                 Secure Kenyan Property Portal
               </span>
               <h1 className="text-3xl sm:text-4xl font-serif text-[#2C362C] tracking-tight">
@@ -156,7 +160,7 @@ export const LoginPage: React.FC = () => {
 
             {/* Mode Switcher Tabs */}
             <div className="flex justify-center">
-              <div className="bg-[#F5F2EC] p-1 rounded-2xl inline-flex space-x-1">
+              <div className="glass-pill p-1 rounded-2xl inline-flex space-x-1">
                 <button
                   type="button"
                   id="tab-signin-btn"
@@ -220,7 +224,7 @@ export const LoginPage: React.FC = () => {
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="e.g. juma.ochieng@gmail.com or 0712345678"
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-[#FAF8F5] border border-[#EDE8DF] rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:bg-white focus:border-[#5A6D5A] focus:outline-hidden transition"
+                      className="w-full pl-10 pr-4 py-3 glass-input rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:outline-hidden"
                     />
                   </div>
                   <p className="text-[11px] text-[#8C8880] mt-1">
@@ -249,7 +253,7 @@ export const LoginPage: React.FC = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter password"
                       required
-                      className="w-full pl-10 pr-10 py-3 bg-[#FAF8F5] border border-[#EDE8DF] rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:bg-white focus:border-[#5A6D5A] focus:outline-hidden transition"
+                      className="w-full pl-10 pr-10 py-3 glass-input rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:outline-hidden"
                     />
                     <button
                       type="button"
@@ -273,8 +277,8 @@ export const LoginPage: React.FC = () => {
                       onClick={() => setRoleHint('tenant')}
                       className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
                         roleHint === 'tenant'
-                          ? 'border-[#5A6D5A] bg-[#F2F6F2] text-[#4A5D4A]'
-                          : 'border-[#EDE8DF] text-[#8C8880] hover:bg-[#FAF8F5]'
+                          ? 'border-[#5A6D5A] bg-[#F2F6F2]/90 text-[#4A5D4A] shadow-xs'
+                          : 'border-white/80 glass-pill text-[#8C8880] hover:text-[#2C362C]'
                       }`}
                     >
                       <Smartphone className="w-4 h-4" />
@@ -287,8 +291,8 @@ export const LoginPage: React.FC = () => {
                       onClick={() => setRoleHint('landlord')}
                       className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
                         roleHint === 'landlord'
-                          ? 'border-[#2C362C] bg-[#2C362C] text-white'
-                          : 'border-[#EDE8DF] text-[#8C8880] hover:bg-[#FAF8F5]'
+                          ? 'border-[#2C362C] bg-[#2C362C] text-white shadow-xs'
+                          : 'border-white/80 glass-pill text-[#8C8880] hover:text-[#2C362C]'
                       }`}
                     >
                       <ShieldCheck className="w-4 h-4" />
@@ -485,13 +489,13 @@ export const LoginPage: React.FC = () => {
                     key={user.id}
                     type="button"
                     onClick={() => fillQuickPreset(user)}
-                    className="p-3.5 rounded-2xl border border-[#EDE8DF] hover:border-[#2C362C] bg-[#FAF8F5] hover:bg-white text-left transition group"
+                    className="p-3.5 rounded-2xl glass-card glass-card-hover text-left transition group border border-white/80"
                   >
                     <div className="flex items-center space-x-2.5">
                       <img
                         src={user.avatarUrl}
                         alt={user.name}
-                        className="w-9 h-9 rounded-full object-cover shrink-0"
+                        className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white"
                       />
                       <div className="overflow-hidden">
                         <div className="flex items-center space-x-1.5">
@@ -513,13 +517,13 @@ export const LoginPage: React.FC = () => {
                     key={user.id}
                     type="button"
                     onClick={() => fillQuickPreset(user)}
-                    className="p-3.5 rounded-2xl border border-[#EDE8DF] hover:border-[#5A6D5A] bg-[#FAF8F5] hover:bg-white text-left transition group"
+                    className="p-3.5 rounded-2xl glass-card glass-card-hover text-left transition group border border-white/80"
                   >
                     <div className="flex items-center space-x-2.5">
                       <img
                         src={user.avatarUrl}
                         alt={user.name}
-                        className="w-9 h-9 rounded-full object-cover shrink-0"
+                        className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white"
                       />
                       <div className="overflow-hidden">
                         <div className="flex items-center space-x-1.5">

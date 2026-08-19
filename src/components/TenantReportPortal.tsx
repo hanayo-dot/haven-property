@@ -246,7 +246,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
 
   if (submittedTicket) {
     return (
-      <div className="max-w-2xl mx-auto p-8 sm:p-10 bg-white rounded-[32px] border border-[#EDE8DF] shadow-xl text-center space-y-5 animate-fadeIn">
+      <div className="max-w-2xl mx-auto p-8 sm:p-10 glass-modal rounded-[32px] border border-white/90 shadow-xl text-center space-y-5 animate-fadeIn">
         <div className="w-14 h-14 bg-[#F2F6F2] text-[#4A5D4A] rounded-full flex items-center justify-center mx-auto shadow-xs">
           <CheckCircle2 className="w-8 h-8" />
         </div>
@@ -263,7 +263,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#EDE8DF] text-left space-y-2 text-xs">
+        <div className="p-4 rounded-2xl bg-white/70 border border-[#EDE8DF]/80 text-left space-y-2 text-xs">
           <div className="flex items-center space-x-2 font-semibold text-[#2C362C]">
             <Sparkles className="w-3.5 h-3.5 text-[#5A6D5A]" />
             <span>Next Steps:</span>
@@ -302,7 +302,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               setDescription('');
               setPhotos([]);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#FAF8F5] hover:bg-[#F5F2EC] text-[#2C362C] font-semibold text-xs transition border border-[#EDE8DF]"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/80 hover:bg-white text-[#2C362C] font-semibold text-xs transition border border-[#EDE8DF]"
           >
             Submit Another Report
           </button>
@@ -318,23 +318,23 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-2xl bg-[#5A6D5A] text-white flex items-center justify-center shadow-xs">
-            <Camera className="w-5 h-5" />
+            <Wrench className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-serif text-[#2C362C]">
-              Resident Maintenance Report
+              Report Breakage & Damage
             </h1>
             <p className="text-xs text-[#8C8880]">
-              Snap photos of leaks, broken fixtures, or concerns for rapid triage in Nairobi
+              Upload damage photos for automated AI diagnostics & fundi dispatch in Nairobi.
             </p>
           </div>
         </div>
 
         {isModal && onClose && (
           <button
+            id="close-report-modal-btn"
             onClick={onClose}
-            aria-label="Close modal"
-            className="p-2 rounded-xl text-[#8C8880] hover:text-[#2C362C] hover:bg-[#FAF8F5] transition"
+            className="p-2 text-[#8C8880] hover:text-[#2C362C] hover:bg-white/60 rounded-xl transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -342,7 +342,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       </div>
 
       {/* Preset Fast-Test Bar */}
-      <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EDE8DF] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+      <div className="p-3 rounded-2xl glass-card border border-white/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
         <div className="flex items-center space-x-1.5 font-semibold text-[#2C362C]">
           <Zap className="w-3.5 h-3.5 text-[#D17A5E]" />
           <span>Kenyan Presets:</span>
@@ -353,7 +353,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               key={idx}
               type="button"
               onClick={() => handleApplyPreset(preset)}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-white hover:bg-[#F2EFEA] text-[#2C362C] border border-[#EDE8DF] font-medium transition shadow-2xs"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-white/80 hover:bg-white text-[#2C362C] border border-[#EDE8DF] font-medium transition shadow-2xs"
             >
               {preset.title.split('&')[0]}
             </button>
@@ -365,7 +365,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Step 1: Property & Unit Selection */}
-        <div className="p-5 rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
+        <div className="p-5 rounded-[22px] glass-card border border-white/80 space-y-3">
           <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#5A6D5A] flex items-center space-x-1.5">
             <Building2 className="w-3.5 h-3.5" />
             <span>1. Apartment & Resident Information</span>
@@ -384,7 +384,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                   setSelectedPropertyId(e.target.value);
                   setSelectedUnitId('');
                 }}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] px-3 py-2 focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
               >
                 {properties.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
@@ -400,7 +400,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 id="tenant-report-unit-select"
                 value={selectedUnitId}
                 onChange={e => handleUnitChange(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] px-3 py-2 focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
               >
                 <option value="">Select Unit</option>
                 {propertyUnits.map(u => (
@@ -420,7 +420,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 placeholder="Juma Ochieng"
                 value={tenantName}
                 onChange={e => setTenantName(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] px-3 py-2 focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
               />
             </div>
 
@@ -435,7 +435,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 placeholder="+254 712 345 678"
                 value={tenantPhone}
                 onChange={e => setTenantPhone(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] px-3 py-2 focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
               />
             </div>
           </div>

@@ -253,14 +253,14 @@ export const TenantsView: React.FC = () => {
       )}
 
       {/* Search Bar */}
-      <div className="p-3.5 rounded-2xl bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center">
+      <div className="p-3.5 rounded-2xl glass-card border border-white/80 flex items-center">
         <Search className="w-4 h-4 text-[#8C8880] ml-1 mr-3" />
         <input
           type="text"
           placeholder="Search by resident name, unit #, estate, phone, or M-Pesa receipt ref..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full text-xs sm:text-sm bg-transparent text-[#2C362C] placeholder-[#8C8880] focus:outline-none"
+          className="w-full text-xs sm:text-sm bg-transparent text-[#2C362C] placeholder-[#8C8880] focus:outline-hidden"
         />
       </div>
 
@@ -271,7 +271,7 @@ export const TenantsView: React.FC = () => {
           return (
             <div
               key={tenant.id}
-              className="p-5 rounded-[24px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-[#5A6D5A]/40 transition space-y-3.5"
+              className="p-5 rounded-[24px] glass-card glass-card-hover border border-white/80 transition space-y-3.5"
             >
               {/* Header: Avatar & Info */}
               <div className="flex items-start justify-between">

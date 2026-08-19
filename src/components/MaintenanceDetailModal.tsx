@@ -143,15 +143,15 @@ Suggested Trade: ${request.aiDiagnosis?.suggestedTrade || request.category}`;
       role="dialog"
       aria-modal="true"
       onClick={() => setSelectedRequestId(null)}
-      className="fixed inset-0 z-40 bg-[#2C362C]/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-40 bg-[#2C362C]/50 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fadeIn"
     >
       <div 
         id="maintenance-detail-modal"
         onClick={e => e.stopPropagation()}
-        className="bg-white border border-[#EDE8DF] rounded-[32px] max-w-5xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col text-[#2C362C] my-auto"
+        className="glass-modal rounded-[32px] max-w-5xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col text-[#2C362C] my-auto border border-white/90"
       >
         {/* Modal Top Bar */}
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 sm:px-8 py-4 border-b border-[#EDE8DF] flex items-center justify-between">
+        <div className="sticky top-0 z-20 glass-header px-6 sm:px-8 py-4 border-b border-[#EDE8DF] flex items-center justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-[#FAF8F5] text-[#4A5D4A] border border-[#EDE8DF]">
               {request.ticketNumber}

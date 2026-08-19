@@ -185,27 +185,28 @@ export const MaintenanceHub: React.FC = () => {
         </div>
       )}
 
-      {/* Streamlined Filter & Search Toolbar */}
-      <div className="p-4 rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+      {/* Search & Filter Bar */}
+      <div className="p-4 sm:p-5 rounded-[24px] glass-card border border-white/80 space-y-3.5">
+        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+          
           {/* Search Input */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C8880]" />
             <input
               type="text"
-              placeholder="Search by ticket #, title, resident, unit..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2 rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] focus:bg-white focus:ring-2 focus:ring-[#5A6D5A]/30 focus:border-[#5A6D5A] focus:outline-none"
+              placeholder="Search by ticket #, description, tenant name, or unit..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-xs text-[#2C362C] placeholder-[#8C8880] focus:outline-hidden"
             />
           </div>
 
-          {/* Inline Compact Selectors */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+          {/* Category, Property, Priority Selectors */}
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={selectedProperty}
               onChange={e => setSelectedProperty(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] focus:bg-white focus:outline-none"
+              className="text-xs py-2 px-3 rounded-xl glass-input text-[#2C362C] focus:outline-hidden"
             >
               <option value="all">All Properties</option>
               {properties.map(p => (
@@ -216,7 +217,7 @@ export const MaintenanceHub: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] focus:bg-white focus:outline-none"
+              className="text-xs py-2 px-3 rounded-xl glass-input text-[#2C362C] focus:outline-hidden"
             >
               <option value="all">All Categories</option>
               <option value="Plumbing">Plumbing</option>
@@ -232,7 +233,7 @@ export const MaintenanceHub: React.FC = () => {
             <select
               value={selectedPriority}
               onChange={e => setSelectedPriority(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] focus:bg-white focus:outline-none"
+              className="text-xs py-2 px-3 rounded-xl glass-input text-[#2C362C] focus:outline-hidden"
             >
               <option value="all">All Priorities</option>
               <option value="Emergency">🚨 Emergency</option>
@@ -268,7 +269,7 @@ export const MaintenanceHub: React.FC = () => {
                 className={`text-xs px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition ${
                   isSelected
                     ? 'bg-[#5A6D5A] text-white font-semibold shadow-xs'
-                    : 'text-[#8C8880] hover:text-[#2C362C] hover:bg-[#F5F2EC]'
+                    : 'text-[#8C8880] hover:text-[#2C362C] hover:bg-white/60'
                 }`}
               >
                 {status === 'all' ? 'All Tickets' : status} ({count})
@@ -286,7 +287,7 @@ export const MaintenanceHub: React.FC = () => {
             return (
               <div 
                 key={col.id} 
-                className="rounded-[22px] bg-[#FAF8F5]/80 border border-[#EDE8DF]/80 p-3 flex flex-col min-h-[480px]"
+                className="rounded-[22px] glass-panel border border-white/70 p-3 flex flex-col min-h-[480px]"
               >
                 {/* Column Header */}
                 <div className="flex items-center justify-between mb-3 px-1">
@@ -307,7 +308,7 @@ export const MaintenanceHub: React.FC = () => {
                     <div
                       key={request.id}
                       onClick={() => setSelectedRequestId(request.id)}
-                      className="group p-3.5 rounded-[18px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.04)] hover:border-[#5A6D5A]/40 transition cursor-pointer space-y-2"
+                      className="group p-3.5 rounded-[18px] glass-card glass-card-hover border border-white/80 transition cursor-pointer space-y-2"
                     >
                       {/* Card Top: Ticket # & Priority */}
                       <div className="flex items-center justify-between">

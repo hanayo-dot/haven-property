@@ -76,12 +76,12 @@ export const NewPropertyModal: React.FC = () => {
     <div 
       id="new-property-backdrop"
       onClick={() => setIsNewPropertyModalOpen(false)}
-      className="fixed inset-0 z-50 bg-[#2C362C]/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-[#2C362C]/50 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
     >
       <div 
         id="new-property-modal"
         onClick={e => e.stopPropagation()}
-        className="bg-white border border-[#EDE8DF] rounded-[32px] max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl my-auto text-[#2C362C] animate-fadeIn"
+        className="glass-modal rounded-[32px] max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl my-auto text-[#2C362C] animate-fadeIn border border-white/90"
       >
         <div className="flex items-center justify-between pb-3 border-b border-[#F5F2EC]">
           <div className="flex items-center space-x-3">
