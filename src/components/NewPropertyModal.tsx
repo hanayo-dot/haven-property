@@ -65,7 +65,7 @@ export const NewPropertyModal: React.FC = () => {
       managerContact: {
         name: managerName,
         phone: managerPhone,
-        email: 'wanjiku@havenmgmt.co.ke'
+        email: 'wanjiku@estateflow.co.ke'
       }
     });
 
@@ -76,25 +76,25 @@ export const NewPropertyModal: React.FC = () => {
     <div 
       id="new-property-backdrop"
       onClick={() => setIsNewPropertyModalOpen(false)}
-      className="fixed inset-0 z-50 bg-[#2C362C]/50 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
     >
       <div 
         id="new-property-modal"
         onClick={e => e.stopPropagation()}
-        className="glass-modal rounded-[32px] max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl my-auto text-[#2C362C] animate-fadeIn border border-white/90"
+        className="glass-modal rounded-[32px] max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl my-auto text-[#0F172A] animate-fadeIn border border-white/90"
       >
-        <div className="flex items-center justify-between pb-3 border-b border-[#F5F2EC]">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#5A6D5A] text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#0045A5] text-white flex items-center justify-center shadow-xs">
               <Building2 className="w-4 h-4" />
             </div>
-            <h2 className="text-xl font-serif text-[#2C362C]">
+            <h2 className="text-xl font-bold text-[#0F172A]">
               Add Nairobi Property
             </h2>
           </div>
           <button
             onClick={() => setIsNewPropertyModalOpen(false)}
-            className="p-1.5 rounded-xl text-[#8C8880] hover:text-[#2C362C] hover:bg-[#FAF8F5] transition"
+            className="p-1.5 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -103,7 +103,7 @@ export const NewPropertyModal: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="sm:col-span-2">
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Property / Estate Name *
               </label>
               <input
@@ -112,12 +112,12 @@ export const NewPropertyModal: React.FC = () => {
                 placeholder="e.g. Riverside Palms Residency"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Street Address / Location in Nairobi *
               </label>
               <input
@@ -126,18 +126,18 @@ export const NewPropertyModal: React.FC = () => {
                 placeholder="e.g. Riverside Drive, off Chiromo Road"
                 value={address}
                 onChange={e => setAddress(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Neighborhood / Estate *
               </label>
               <select
                 value={state}
                 onChange={e => setState(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               >
                 <option value="Kilimani">Kilimani</option>
                 <option value="Westlands">Westlands</option>
@@ -150,13 +150,13 @@ export const NewPropertyModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Property Type
               </label>
               <select
                 value={type}
                 onChange={e => setType(e.target.value as Property['type'])}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               >
                 <option value="Apartment Complex">Apartment Complex</option>
                 <option value="Residential Court">Residential Court</option>
@@ -167,19 +167,19 @@ export const NewPropertyModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Total Apartment Units
               </label>
               <input
                 type="number"
                 value={totalUnits}
                 onChange={e => setTotalUnits(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 M-Pesa Paybill Number
               </label>
               <input
@@ -187,37 +187,37 @@ export const NewPropertyModal: React.FC = () => {
                 value={mpesaPaybill}
                 onChange={e => setMpesaPaybill(e.target.value)}
                 placeholder="880120"
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Caretaker Name
               </label>
               <input
                 type="text"
                 value={caretakerName}
                 onChange={e => setCaretakerName(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Caretaker Phone (+254)
               </label>
               <input
                 type="tel"
                 value={caretakerPhone}
                 onChange={e => setCaretakerPhone(e.target.value)}
-                className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3 py-2 text-[#2C362C] focus:bg-white focus:outline-none"
+                className="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[#0F172A] focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-[#8C8880] mb-1.5">
+            <label className="block text-[11px] font-semibold text-[#64748B] mb-1.5">
               Select Preset Photo
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -226,7 +226,7 @@ export const NewPropertyModal: React.FC = () => {
                   key={i}
                   onClick={() => setImageUrl(img.url)}
                   className={`rounded-xl overflow-hidden aspect-video border cursor-pointer transition ${
-                    imageUrl === img.url ? 'border-[#5A6D5A] ring-2 ring-[#5A6D5A]' : 'border-[#EDE8DF]'
+                    imageUrl === img.url ? 'border-[#0045A5] ring-2 ring-[#0045A5]' : 'border-slate-200'
                   }`}
                 >
                   <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
@@ -235,17 +235,17 @@ export const NewPropertyModal: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-2 border-t border-[#F5F2EC]">
+          <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100">
             <button
               type="button"
               onClick={() => setIsNewPropertyModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs text-[#8C8880] hover:bg-[#F5F2EC]"
+              className="px-4 py-2 rounded-xl text-xs text-[#64748B] hover:bg-slate-100"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#5A6D5A] hover:bg-[#4D5E4D] text-white font-semibold text-xs shadow-xs"
+              className="px-5 py-2 rounded-xl bg-[#0045A5] hover:bg-[#003882] text-white font-semibold text-xs shadow-xs"
             >
               Create Property
             </button>

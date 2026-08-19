@@ -21,48 +21,48 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   subtitle,
   icon: Icon,
   trend,
-  accentColor = 'emerald',
+  accentColor = 'blue',
   onClick
 }) => {
   const colorMap = {
+    blue: {
+      iconBg: 'bg-[#EFF6FF] text-[#0045A5]',
+      ring: 'hover:border-[#0045A5]/40 hover:shadow-[0_8px_24px_rgba(0,69,165,0.08)]',
+    },
     emerald: {
-      iconBg: 'bg-[#F2F6F2] text-[#4A5D4A]',
-      ring: 'hover:border-[#5A6D5A]/50 hover:shadow-[0_8px_24px_rgba(90,109,90,0.08)]',
+      iconBg: 'bg-[#ECFDF5] text-[#059669]',
+      ring: 'hover:border-[#059669]/40 hover:shadow-[0_8px_24px_rgba(5,150,105,0.08)]',
     },
     amber: {
-      iconBg: 'bg-[#FAF4EB] text-[#C28B38]',
-      ring: 'hover:border-[#C28B38]/50 hover:shadow-[0_8px_24px_rgba(194,139,56,0.08)]',
-    },
-    blue: {
-      iconBg: 'bg-[#F0F4F8] text-[#2C3E50]',
-      ring: 'hover:border-[#2C3E50]/40 hover:shadow-[0_8px_24px_rgba(44,62,80,0.08)]',
+      iconBg: 'bg-[#FFFBEB] text-[#D97706]',
+      ring: 'hover:border-[#D97706]/40 hover:shadow-[0_8px_24px_rgba(217,119,6,0.08)]',
     },
     purple: {
-      iconBg: 'bg-[#F5F2F7] text-[#6A5A7A]',
-      ring: 'hover:border-[#6A5A7A]/40 hover:shadow-[0_8px_24px_rgba(106,90,122,0.08)]',
+      iconBg: 'bg-[#F5F3FF] text-[#7C3AED]',
+      ring: 'hover:border-[#7C3AED]/40 hover:shadow-[0_8px_24px_rgba(124,58,237,0.08)]',
     },
     red: {
-      iconBg: 'bg-[#FBF1EE] text-[#D17A5E]',
-      ring: 'hover:border-[#D17A5E]/50 hover:shadow-[0_8px_24px_rgba(209,122,94,0.08)]',
+      iconBg: 'bg-[#FEF2F2] text-[#DC2626]',
+      ring: 'hover:border-[#DC2626]/40 hover:shadow-[0_8px_24px_rgba(220,38,38,0.08)]',
     },
   };
 
-  const selectedColor = colorMap[accentColor] || colorMap.emerald;
+  const selectedColor = colorMap[accentColor] || colorMap.blue;
 
   return (
     <div
       id={id}
       onClick={onClick}
-      className={`group relative p-6 rounded-[24px] glass-card glass-card-hover border border-white/80 transition-all duration-200 ${
+      className={`group relative p-6 rounded-[24px] glass-card glass-card-hover border border-slate-200/80 transition-all duration-200 ${
         onClick ? `cursor-pointer ${selectedColor.ring} active:scale-[0.99]` : ''
       }`}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
-          <p className="text-[11px] font-semibold text-[#8C8880] uppercase tracking-wider">
+          <p className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-serif text-[#2C362C] tracking-tight">
+          <p className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
             {value}
           </p>
         </div>
@@ -72,18 +72,18 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       </div>
 
       {(subtitle || trend) && (
-        <div className="mt-4 pt-3 border-t border-[#F5F2EC] flex items-center justify-between text-xs">
+        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
           {subtitle && (
-            <span className="text-[#8C8880] font-normal text-[11px]">
+            <span className="text-[#64748B] font-normal text-[11px]">
               {subtitle}
             </span>
           )}
           {trend && (
             <span
-              className={`font-semibold text-[11px] px-2 py-0.5 rounded-full ${
+              className={`font-semibold text-[11px] px-2.5 py-0.5 rounded-full ${
                 trend.isPositive === false 
-                  ? 'text-[#D17A5E] bg-[#FBF1EE]' 
-                  : 'text-[#4A5D4A] bg-[#F2F6F2]'
+                  ? 'text-rose-600 bg-rose-50 border border-rose-100' 
+                  : 'text-emerald-700 bg-emerald-50 border border-emerald-100'
               }`}
             >
               {trend.text}

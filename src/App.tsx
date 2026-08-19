@@ -59,7 +59,7 @@ const MainAppContent: React.FC = () => {
   const isTenantView = currentUser.role === 'tenant' || viewMode === 'tenant-portal';
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2C362C] antialiased flex flex-col font-sans selection:bg-[#5A6D5A] selection:text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] antialiased flex flex-col font-sans selection:bg-[#0045A5] selection:text-white relative overflow-hidden">
       {/* Subtle Ambient Mesh Glows for Glassmorphism Depth */}
       <div className="ambient-glow-1" />
       <div className="ambient-glow-2" />
@@ -87,14 +87,14 @@ const MainAppContent: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-[#EDE8DF] bg-[#FAF8F5] py-6 text-center text-xs text-[#8C8880]">
+      <footer className="mt-auto border-t border-[#E2E8F0] bg-white/80 backdrop-blur-md py-6 text-center text-xs text-[#64748B]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <span className="font-serif font-bold text-[#2C362C]">Haven Kenya</span>
+            <span className="font-bold text-[#0F172A]">EstateFlow Kenya</span>
             <span>•</span>
-            <span>Natural Apartment & Property OS (Nairobi)</span>
+            <span>Modern Property Operations & Resident Portal</span>
           </div>
-          <p className="text-[#8C8880]">
+          <p className="text-[#64748B]">
             M-Pesa Rent Tracking • Multimodal Gemini AI Triage • WhatsApp Fundi Dispatch
           </p>
         </div>
@@ -111,12 +111,12 @@ const MainAppContent: React.FC = () => {
         <div 
           id="report-modal-backdrop"
           onClick={() => setIsReportModalOpen(false)}
-          className="fixed inset-0 z-50 bg-[#2C362C]/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
         >
           <div 
             id="report-modal-dialog"
             onClick={e => e.stopPropagation()}
-            className="bg-[#FDFBF7] border border-[#EDE8DF] rounded-[32px] max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl my-auto animate-fadeIn text-[#2C362C]"
+            className="glass-modal rounded-[32px] max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl my-auto animate-fadeIn text-[#1E293B] border border-white/90"
           >
             <TenantReportPortal isModal onClose={() => setIsReportModalOpen(false)} />
           </div>

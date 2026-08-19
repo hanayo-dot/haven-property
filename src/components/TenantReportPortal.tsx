@@ -1,21 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Camera, 
   Upload, 
-  X, 
-  CheckCircle2, 
   Sparkles, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Clock, 
+  MapPin, 
   Building2, 
   Home, 
+  User, 
+  Phone, 
   Wrench, 
-  Lock, 
-  Clock, 
-  Zap, 
-  ArrowRight, 
-  Loader2 
+  X, 
+  Loader2, 
+  ArrowRight,
+  Info,
+  Zap
 } from 'lucide-react';
 import { useProperty } from '../context/PropertyContext';
-import { IssueCategory, IssuePriority, DamagePhoto } from '../types';
+import { DamagePhoto, IssueCategory, IssuePriority, MaintenanceRequest } from '../types';
 import { SAMPLE_BREAKAGE_PRESETS } from '../data/mockData';
 import { compressImage } from '../utils/imageCompressor';
 
@@ -26,94 +30,45 @@ interface TenantReportPortalProps {
 
 export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal = false, onClose }) => {
   const { 
-    currentUser,
     properties, 
     units, 
-    tenants, 
-    addMaintenanceRequest, 
-    setSelectedRequestId, 
-    setViewMode, 
+    currentUser, 
+    createMaintenanceRequest, 
+    setSelectedRequestId,
+    setIsReportModalOpen,
+    setViewMode,
     setActiveTab,
-    setIsReportModalOpen 
+    formatKsh
   } = useProperty();
+
+  // Form State
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>(
+    currentUser?.propertyId || (properties[0]?.id || '')
+  );
+  const [selectedUnitId, setSelectedUnitId] = useState<string>(
+    currentUser?.unitId || (units.find(u => u.propertyId === (currentUser?.propertyId || properties[0]?.id))?.id || '')
+  );
+  const [tenantName, setTenantName] = useState<string>(currentUser?.name || 'Juma Ochieng');
+  const [tenantPhone, setTenantPhone] = useState<string>(currentUser?.phone || '+254 712 345 678');
+  const [tenantEmail, setTenantEmail] = useState<string>(currentUser?.email || 'juma@havenresident.co.ke');
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [category, setCategory] = useState<IssueCategory>('Plumbing');
+  const [priority, setPriority] = useState<IssuePriority>('Medium');
+  const [entryPermission, setEntryPermission] = useState<boolean>(true);
+  const [photos, setPhotos] = useState<DamagePhoto[]>([]);
+  const [isProcessingPhotos, setIsProcessingPhotos] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submittedTicket, setSubmittedTicket] = useState<MaintenanceRequest | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Form State
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string>(currentUser?.propertyId || properties[0]?.id || '');
-  const [selectedUnitId, setSelectedUnitId] = useState<string>(currentUser?.unitId || '');
-  const [tenantName, setTenantName] = useState(currentUser?.name || '');
-  const [tenantPhone, setTenantPhone] = useState(currentUser?.phone || '+254 712 345 678');
-  const [tenantEmail, setTenantEmail] = useState(currentUser?.email || '');
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<IssueCategory>('Plumbing');
-  const [priority, setPriority] = useState<IssuePriority>('High');
-  const [description, setDescription] = useState('');
-  const [entryPermission, setEntryPermission] = useState(true);
-  const [preferredTime, setPreferredTime] = useState('Morning (8:00 AM - 12:00 PM)');
-  const [photos, setPhotos] = useState<DamagePhoto[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isProcessingPhotos, setIsProcessingPhotos] = useState(false);
-  const [submittedTicket, setSubmittedTicket] = useState<{ id: string; ticketNumber: string } | null>(null);
-
+  // Property units
   const propertyUnits = units.filter(u => u.propertyId === selectedPropertyId);
-
-  // Deep linking URL query param parsing
-  useEffect(() => {
-    try {
-      const searchParams = new URLSearchParams(window.location.search);
-      const paramProp = searchParams.get('property');
-      const paramUnit = searchParams.get('unit');
-      const paramCat = searchParams.get('category');
-
-      if (paramProp && properties.some(p => p.id === paramProp)) {
-        setSelectedPropertyId(paramProp);
-      }
-      if (paramUnit && units.some(u => u.id === paramUnit || u.unitNumber === paramUnit)) {
-        const foundUnit = units.find(u => u.id === paramUnit || u.unitNumber === paramUnit);
-        if (foundUnit) {
-          setSelectedUnitId(foundUnit.id);
-          if (foundUnit.propertyId) setSelectedPropertyId(foundUnit.propertyId);
-          if (foundUnit.currentTenantId) {
-            const tenant = tenants.find(t => t.id === foundUnit.currentTenantId);
-            if (tenant) {
-              setTenantName(tenant.name);
-              setTenantPhone(tenant.phone);
-              setTenantEmail(tenant.email);
-            }
-          }
-        }
-      }
-      if (paramCat) {
-        setCategory(paramCat as IssueCategory);
-      }
-    } catch (e) {
-      console.warn('Error reading URL parameters:', e);
-    }
-  }, [properties, units, tenants]);
-
-  // Prepopulate if currentUser changes
-  useEffect(() => {
-    if (currentUser) {
-      if (currentUser.name && !tenantName) setTenantName(currentUser.name);
-      if (currentUser.phone && !tenantPhone) setTenantPhone(currentUser.phone);
-      if (currentUser.email && !tenantEmail) setTenantEmail(currentUser.email);
-      if (currentUser.propertyId && !selectedPropertyId) setSelectedPropertyId(currentUser.propertyId);
-      if (currentUser.unitId && !selectedUnitId) setSelectedUnitId(currentUser.unitId);
-    }
-  }, [currentUser]);
+  const currentUnit = units.find(u => u.id === selectedUnitId);
 
   const handleUnitChange = (unitId: string) => {
     setSelectedUnitId(unitId);
-    const unit = units.find(u => u.id === unitId);
-    if (unit && unit.currentTenantId) {
-      const tenant = tenants.find(t => t.id === unit.currentTenantId);
-      if (tenant) {
-        setTenantName(tenant.name);
-        setTenantPhone(tenant.phone);
-        setTenantEmail(tenant.email);
-      }
-    }
   };
 
   const handleApplyPreset = (preset: typeof SAMPLE_BREAKAGE_PRESETS[0]) => {
@@ -178,56 +133,58 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       },
       {
         url: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=1000&q=80',
-        caption: 'Instant water heater component fault',
-        tag: 'Instant Shower'
+        caption: 'Hot water cylinder pressure relief valve continuous discharge',
+        tag: 'Boiler Relief'
       }
     ];
-    const picked = samplePhotos[photos.length % samplePhotos.length];
-    const newPhoto: DamagePhoto = {
-      id: `photo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-      url: picked.url,
-      caption: picked.caption,
-      timestamp: new Date().toISOString(),
-      tag: picked.tag
-    };
-    setPhotos(prev => [...prev, newPhoto]);
+
+    const pick = samplePhotos[photos.length % samplePhotos.length];
+    setPhotos(prev => [
+      ...prev,
+      {
+        id: `sample-photo-${Date.now()}`,
+        url: pick.url,
+        caption: pick.caption,
+        timestamp: new Date().toISOString(),
+        tag: pick.tag
+      }
+    ]);
   };
 
-  const handleRemovePhoto = (id: string) => {
-    setPhotos(prev => prev.filter(p => p.id !== id));
+  const handleRemovePhoto = (photoId: string) => {
+    setPhotos(prev => prev.filter(p => p.id !== photoId));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !description || !selectedPropertyId) return;
+    if (!title || !description || !selectedUnitId) return;
 
     setIsSubmitting(true);
 
-    const prop = properties.find(p => p.id === selectedPropertyId);
-    const unit = units.find(u => u.id === selectedUnitId);
-
     try {
-      const created = await addMaintenanceRequest({
+      const prop = properties.find(p => p.id === selectedPropertyId);
+      const unit = units.find(u => u.id === selectedUnitId);
+
+      const newTicket = await createMaintenanceRequest({
         propertyId: selectedPropertyId,
-        propertyName: prop?.name || 'Apartment Residence',
-        unitId: selectedUnitId || (propertyUnits[0]?.id || 'unit-general'),
-        unitNumber: unit?.unitNumber || (propertyUnits[0]?.unitNumber || 'Main'),
-        tenantName: tenantName || 'Resident',
-        tenantPhone: tenantPhone || '+254 712 345 678',
-        tenantEmail: tenantEmail || 'resident@havenmgmt.co.ke',
+        propertyName: prop?.name || 'Property',
+        unitId: selectedUnitId,
+        unitNumber: unit?.unitNumber || '101',
+        tenantId: currentUser?.id,
+        tenantName,
+        tenantPhone,
+        tenantEmail,
         title,
         description,
         category,
         priority,
-        status: 'New',
-        entryPermission,
-        preferredTime,
-        photos
+        photos,
+        entryPermission
       });
 
-      setSubmittedTicket({ id: created.id, ticketNumber: created.ticketNumber });
+      setSubmittedTicket(newTicket);
     } catch (err) {
-      console.error('Error submitting maintenance request:', err);
+      console.error('Error submitting report:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -236,7 +193,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
   const categories: { name: IssueCategory; icon: string }[] = [
     { name: 'Plumbing', icon: '🚰' },
     { name: 'Electrical', icon: '⚡' },
-    { name: 'Appliance', icon: '🧊' },
+    { name: 'Appliance', icon: '🔌' },
     { name: 'HVAC / Climate', icon: '☀️' },
     { name: 'Structural & Windows', icon: '🪟' },
     { name: 'Locks & Security', icon: '🔒' },
@@ -247,28 +204,28 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
   if (submittedTicket) {
     return (
       <div className="max-w-2xl mx-auto p-8 sm:p-10 glass-modal rounded-[32px] border border-white/90 shadow-xl text-center space-y-5 animate-fadeIn">
-        <div className="w-14 h-14 bg-[#F2F6F2] text-[#4A5D4A] rounded-full flex items-center justify-center mx-auto shadow-xs">
+        <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-xs border border-emerald-200">
           <CheckCircle2 className="w-8 h-8" />
         </div>
 
         <div className="space-y-1.5">
-          <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-[#FAF8F5] text-[#4A5D4A] border border-[#EDE8DF]">
+          <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-blue-50 text-[#0045A5] border border-blue-200">
             {submittedTicket.ticketNumber}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-serif text-[#2C362C]">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A]">
             Maintenance Ticket Submitted
           </h2>
-          <p className="text-[#8C8880] text-xs sm:text-sm max-w-md mx-auto">
+          <p className="text-[#64748B] text-xs sm:text-sm max-w-md mx-auto">
             Your property management team in Nairobi has been notified with your {photos.length} damage photo{photos.length !== 1 ? 's' : ''}.
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white/70 border border-[#EDE8DF]/80 text-left space-y-2 text-xs">
-          <div className="flex items-center space-x-2 font-semibold text-[#2C362C]">
-            <Sparkles className="w-3.5 h-3.5 text-[#5A6D5A]" />
+        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-xs">
+          <div className="flex items-center space-x-2 font-semibold text-[#0F172A]">
+            <Sparkles className="w-3.5 h-3.5 text-[#0045A5]" />
             <span>Next Steps:</span>
           </div>
-          <ul className="space-y-1 text-[#555555] list-disc list-inside">
+          <ul className="space-y-1 text-[#64748B] list-disc list-inside">
             <li>Multimodal Gemini AI Vision has estimated local repair costs in KSh and part requirements.</li>
             <li>Landlord Eleanor will assign a certified Nairobi fundi.</li>
             <li>You will receive SMS/WhatsApp updates when the technician is dispatched.</li>
@@ -289,7 +246,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               if (onClose) onClose();
               setIsReportModalOpen(false);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#5A6D5A] hover:bg-[#4D5E4D] text-white font-semibold text-xs shadow-xs transition flex items-center justify-center space-x-2"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0045A5] hover:bg-[#003882] text-white font-semibold text-xs shadow-xs transition flex items-center justify-center space-x-2"
           >
             <span>View Ticket Status</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -302,7 +259,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               setDescription('');
               setPhotos([]);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/80 hover:bg-white text-[#2C362C] font-semibold text-xs transition border border-[#EDE8DF]"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#0F172A] font-semibold text-xs transition border border-slate-200"
           >
             Submit Another Report
           </button>
@@ -317,14 +274,14 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       {/* Header Banner */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#5A6D5A] text-white flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-2xl bg-[#0045A5] text-white flex items-center justify-center shadow-xs">
             <Wrench className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-serif text-[#2C362C]">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A]">
               Report Breakage & Damage
             </h1>
-            <p className="text-xs text-[#8C8880]">
+            <p className="text-xs text-[#64748B]">
               Upload damage photos for automated AI diagnostics & fundi dispatch in Nairobi.
             </p>
           </div>
@@ -334,7 +291,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
           <button
             id="close-report-modal-btn"
             onClick={onClose}
-            className="p-2 text-[#8C8880] hover:text-[#2C362C] hover:bg-white/60 rounded-xl transition"
+            className="p-2 text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 rounded-xl transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -342,9 +299,9 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       </div>
 
       {/* Preset Fast-Test Bar */}
-      <div className="p-3 rounded-2xl glass-card border border-white/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-        <div className="flex items-center space-x-1.5 font-semibold text-[#2C362C]">
-          <Zap className="w-3.5 h-3.5 text-[#D17A5E]" />
+      <div className="p-3 rounded-2xl glass-card border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div className="flex items-center space-x-1.5 font-semibold text-[#0F172A]">
+          <Zap className="w-3.5 h-3.5 text-[#0045A5]" />
           <span>Kenyan Presets:</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -353,7 +310,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               key={idx}
               type="button"
               onClick={() => handleApplyPreset(preset)}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-white/80 hover:bg-white text-[#2C362C] border border-[#EDE8DF] font-medium transition shadow-2xs"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-[#0F172A] border border-slate-200 font-medium transition shadow-2xs"
             >
               {preset.title.split('&')[0]}
             </button>
@@ -365,15 +322,15 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Step 1: Property & Unit Selection */}
-        <div className="p-5 rounded-[22px] glass-card border border-white/80 space-y-3">
-          <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#5A6D5A] flex items-center space-x-1.5">
+        <div className="p-5 rounded-[22px] glass-card border border-slate-200/80 space-y-3">
+          <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#0045A5] flex items-center space-x-1.5">
             <Building2 className="w-3.5 h-3.5" />
             <span>1. Apartment & Resident Information</span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Property Building *
               </label>
               <select
@@ -384,7 +341,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                   setSelectedPropertyId(e.target.value);
                   setSelectedUnitId('');
                 }}
-                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
+                className="w-full text-xs rounded-xl glass-input text-[#0F172A] px-3 py-2 focus:outline-hidden"
               >
                 {properties.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
@@ -393,14 +350,14 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Apartment / Unit # *
               </label>
               <select
                 id="tenant-report-unit-select"
                 value={selectedUnitId}
                 onChange={e => handleUnitChange(e.target.value)}
-                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
+                className="w-full text-xs rounded-xl glass-input text-[#0F172A] px-3 py-2 focus:outline-hidden"
               >
                 <option value="">Select Unit</option>
                 {propertyUnits.map(u => (
@@ -410,7 +367,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Full Name *
               </label>
               <input
@@ -420,12 +377,12 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 placeholder="Juma Ochieng"
                 value={tenantName}
                 onChange={e => setTenantName(e.target.value)}
-                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
+                className="w-full text-xs rounded-xl glass-input text-[#0F172A] px-3 py-2 focus:outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-[#8C8880] mb-1">
+              <label className="block text-[11px] font-semibold text-[#64748B] mb-1">
                 Phone Number (for fundi arrival SMS) *
               </label>
               <input
@@ -435,15 +392,15 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 placeholder="+254 712 345 678"
                 value={tenantPhone}
                 onChange={e => setTenantPhone(e.target.value)}
-                className="w-full text-xs rounded-xl glass-input text-[#2C362C] px-3 py-2 focus:outline-hidden"
+                className="w-full text-xs rounded-xl glass-input text-[#0F172A] px-3 py-2 focus:outline-hidden"
               />
             </div>
           </div>
         </div>
 
         {/* Step 2: Category & Issue Details */}
-        <div className="p-5 rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
-          <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#5A6D5A] flex items-center space-x-1.5">
+        <div className="p-5 rounded-[22px] glass-card border border-slate-200/80 space-y-3">
+          <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#0045A5] flex items-center space-x-1.5">
             <Wrench className="w-3.5 h-3.5" />
             <span>2. Issue & Severity</span>
           </h2>
@@ -457,8 +414,8 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 onClick={() => setCategory(cat.name)}
                 className={`flex items-center space-x-1.5 p-2 rounded-xl text-xs font-semibold transition ${
                   category === cat.name
-                    ? 'bg-[#5A6D5A] text-white shadow-xs'
-                    : 'bg-[#FAF8F5] text-[#2C362C] hover:bg-[#F2EFEA]'
+                    ? 'bg-[#0045A5] text-white shadow-xs'
+                    : 'bg-slate-50 text-[#0F172A] hover:bg-slate-100'
                 }`}
               >
                 <span>{cat.icon}</span>
@@ -481,12 +438,12 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
                 onClick={() => setPriority(p.level as IssuePriority)}
                 className={`p-2.5 rounded-xl border text-left transition ${
                   priority === p.level
-                    ? 'bg-[#FBF1EE] border-[#D17A5E] ring-1 ring-[#D17A5E]'
-                    : 'bg-[#FAF8F5] border-[#EDE8DF] hover:bg-[#F5F2EC]'
+                    ? 'bg-blue-50 border-[#0045A5] ring-1 ring-[#0045A5]'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                <div className="text-xs font-semibold text-[#2C362C]">{p.label}</div>
-                <div className="text-[10px] text-[#8C8880] leading-tight mt-0.5">{p.sub}</div>
+                <div className="text-xs font-semibold text-[#0F172A]">{p.label}</div>
+                <div className="text-[10px] text-[#64748B] leading-tight mt-0.5">{p.sub}</div>
               </button>
             ))}
           </div>
@@ -500,7 +457,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               placeholder="Headline: e.g. Kitchen sink drainage pipe leaking onto cupboard shelf"
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] px-3 py-2 focus:bg-white focus:outline-none"
+              className="w-full text-xs rounded-xl glass-input text-[#0F172A] px-3 py-2 focus:outline-hidden"
             />
 
             <textarea
@@ -510,19 +467,19 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
               placeholder="Detailed description: when it started, exact location in unit, noise/smell..."
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full text-xs rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] text-[#2C362C] px-3 py-2 focus:bg-white focus:outline-none"
+              className="w-full text-xs rounded-xl glass-input text-[#0F172A] px-3 py-2 focus:outline-hidden"
             />
           </div>
         </div>
 
         {/* Step 3: Photo Evidence Upload */}
-        <div className="p-5 rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-3">
+        <div className="p-5 rounded-[22px] glass-card border border-slate-200/80 space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#5A6D5A] flex items-center space-x-1.5">
+            <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#0045A5] flex items-center space-x-1.5">
               <Camera className="w-3.5 h-3.5" />
               <span>3. Damage Pictures ({photos.length})</span>
             </h2>
-            <span className="text-[11px] text-[#8C8880]">
+            <span className="text-[11px] text-[#64748B]">
               Analyzed via Gemini Vision (KSh Estimates)
             </span>
           </div>
@@ -539,26 +496,26 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
           <div className="grid grid-cols-2 gap-2.5">
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-[#EDE8DF] hover:border-[#5A6D5A] rounded-2xl p-4 text-center cursor-pointer bg-[#FAF8F5] hover:bg-[#F2F6F2] transition"
+              className="border-2 border-dashed border-slate-200 hover:border-[#0045A5] rounded-2xl p-4 text-center cursor-pointer bg-slate-50 hover:bg-blue-50/50 transition"
             >
               {isProcessingPhotos ? (
-                <Loader2 className="w-5 h-5 text-[#5A6D5A] animate-spin mx-auto mb-1" />
+                <Loader2 className="w-5 h-5 text-[#0045A5] animate-spin mx-auto mb-1" />
               ) : (
-                <Upload className="w-5 h-5 text-[#5A6D5A] mx-auto mb-1" />
+                <Upload className="w-5 h-5 text-[#0045A5] mx-auto mb-1" />
               )}
-              <p className="text-xs font-semibold text-[#2C362C]">
+              <p className="text-xs font-semibold text-[#0F172A]">
                 {isProcessingPhotos ? 'Compressing...' : 'Upload / Snap Photos'}
               </p>
-              <p className="text-[10px] text-[#8C8880]">Auto-compressed</p>
+              <p className="text-[10px] text-[#64748B]">Auto-compressed</p>
             </div>
 
             <div
               onClick={handleAddSamplePhoto}
-              className="border border-[#EDE8DF] hover:border-[#D6DCD6] rounded-2xl p-4 text-center cursor-pointer bg-[#FAF8F5] hover:bg-[#F5F2EC] transition flex flex-col items-center justify-center"
+              className="border border-slate-200 hover:border-slate-300 rounded-2xl p-4 text-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition flex flex-col items-center justify-center"
             >
-              <Sparkles className="w-5 h-5 text-[#C28B38] mb-1" />
-              <p className="text-xs font-semibold text-[#2C362C]">+ Sample Photo</p>
-              <p className="text-[10px] text-[#8C8880]">Instant Nairobi damage test</p>
+              <Sparkles className="w-5 h-5 text-[#0045A5] mb-1" />
+              <p className="text-xs font-semibold text-[#0F172A]">+ Sample Photo</p>
+              <p className="text-[10px] text-[#64748B]">Instant Nairobi damage test</p>
             </div>
           </div>
 
@@ -566,7 +523,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
           {photos.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
               {photos.map(photo => (
-                <div key={photo.id} className="relative rounded-xl overflow-hidden aspect-video bg-[#FAF8F5] border border-[#EDE8DF] group">
+                <div key={photo.id} className="relative rounded-xl overflow-hidden aspect-video bg-slate-100 border border-slate-200 group">
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                   <button
                     type="button"
@@ -582,15 +539,15 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
         </div>
 
         {/* Step 4: Access Permissions */}
-        <div className="p-4 rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-2.5">
+        <div className="p-4 rounded-[22px] glass-card border border-slate-200/80 space-y-2.5">
           <label className="flex items-start space-x-2.5 cursor-pointer text-xs">
             <input
               type="checkbox"
               checked={entryPermission}
               onChange={e => setEntryPermission(e.target.checked)}
-              className="mt-0.5 w-4 h-4 text-[#5A6D5A] rounded border-[#EDE8DF] focus:ring-[#5A6D5A]"
+              className="mt-0.5 w-4 h-4 text-[#0045A5] rounded border-slate-300 focus:ring-[#0045A5]"
             />
-            <span className="text-[#2C362C]">
+            <span className="text-[#0F172A]">
               <strong>Permission to enter:</strong> Caretaker or fundi may enter apartment if I am not present.
             </span>
           </label>
@@ -601,7 +558,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
           id="tenant-submit-breakage-btn"
           type="submit"
           disabled={isSubmitting || isProcessingPhotos}
-          className="w-full py-3.5 rounded-xl bg-[#5A6D5A] hover:bg-[#4D5E4D] text-white font-semibold text-sm shadow-md transition active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-50"
+          className="w-full py-3.5 rounded-xl bg-[#0045A5] hover:bg-[#003882] text-white font-semibold text-sm shadow-md transition active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-50"
         >
           {isSubmitting ? (
             <>

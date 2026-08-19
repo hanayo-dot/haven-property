@@ -55,7 +55,7 @@ export const TenantDashboard: React.FC = () => {
   const unit = units.find(u => u.id === currentUser?.unitId) || units[0];
 
   const rentAmount = currentUser?.rentAmount || unit?.rentAmount || 75000;
-  const mpesaAccount = currentUser?.mpesaAccount || `HAVEN-${currentUser?.unitNumber || '4B'}`;
+  const mpesaAccount = currentUser?.mpesaAccount || `ESTATE-${currentUser?.unitNumber || '4B'}`;
   const paybillNumber = property?.mpesaPaybill || '880120';
 
   const handleSimulateSTKPush = async (e: React.FormEvent) => {
@@ -85,39 +85,39 @@ export const TenantDashboard: React.FC = () => {
   };
 
   const priorityBadges = {
-    Emergency: 'bg-[#FBF1EE] text-[#D17A5E]',
-    High: 'bg-[#FAF4EB] text-[#C28B38]',
-    Medium: 'bg-[#F2F6F2] text-[#4A5D4A]',
-    Low: 'bg-[#F5F2EC] text-[#7A7A72]',
+    Emergency: 'bg-rose-50 text-rose-600 border border-rose-200',
+    High: 'bg-amber-50 text-amber-700 border border-amber-200',
+    Medium: 'bg-blue-50 text-[#0045A5] border border-blue-200',
+    Low: 'bg-slate-100 text-[#64748B] border border-slate-200',
   };
 
   const statusBadges: Record<IssueStatus, string> = {
-    'New': 'bg-[#FAF8F5] text-[#8C8880] border border-[#EDE8DF]',
-    'Under Review': 'bg-[#FAF4EB] text-[#C28B38] border border-[#F0E4D0]',
-    'Scheduled': 'bg-[#F2F6F2] text-[#4A5D4A] border border-[#D6DCD6]',
-    'In Progress': 'bg-[#FBF1EE] text-[#D17A5E] border border-[#F5D8CF]',
-    'Resolved': 'bg-[#2C362C] text-white'
+    'New': 'bg-slate-100 text-[#64748B] border border-slate-200',
+    'Under Review': 'bg-amber-50 text-amber-700 border border-amber-200',
+    'Scheduled': 'bg-blue-50 text-[#0045A5] border border-blue-200',
+    'In Progress': 'bg-sky-50 text-sky-700 border border-sky-200',
+    'Resolved': 'bg-[#0045A5] text-white'
   };
 
   return (
     <div className="space-y-6">
       
       {/* Resident Welcome Banner */}
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2E3B2E] via-[#243024] to-[#1D271D] text-white p-6 sm:p-8 shadow-md">
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0045A5] text-white p-6 sm:p-8 shadow-md">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/15 text-[#C4D0C4] backdrop-blur-xs">
+              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/15 text-sky-200 backdrop-blur-xs">
                 Resident Portal
               </span>
-              <span className="text-xs text-[#A8B6A8]">
+              <span className="text-xs text-slate-300">
                 {property.name} • Unit {currentUser?.unitNumber || '4B'}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-serif text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               Habari, {currentUser?.name || 'Resident'}!
             </h1>
-            <p className="text-xs sm:text-sm text-[#D1DCD1] max-w-xl font-light">
+            <p className="text-xs sm:text-sm text-slate-200 max-w-xl font-light">
               Track repairs, log maintenance with AI photo diagnostics, and pay monthly rent via M-Pesa.
             </p>
           </div>
@@ -125,7 +125,7 @@ export const TenantDashboard: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={() => setActiveSubTab('report')}
-              className="px-4 py-2.5 rounded-xl bg-[#D17A5E] hover:bg-[#c26e54] text-white text-xs sm:text-sm font-semibold shadow-xs transition active:scale-95 flex items-center space-x-2"
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-[#0045A5] text-xs sm:text-sm font-semibold shadow-xs transition active:scale-95 flex items-center space-x-2"
             >
               <Camera className="w-4 h-4" />
               <span>+ Report Breakage</span>
@@ -133,18 +133,18 @@ export const TenantDashboard: React.FC = () => {
 
             <button
               onClick={() => setActiveSubTab('mpesa')}
-              className="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold transition flex items-center space-x-2"
+              className="px-4 py-2.5 rounded-xl bg-[#00A859] hover:bg-[#008f4c] text-white text-xs sm:text-sm font-semibold transition flex items-center space-x-2 shadow-xs"
             >
-              <CreditCard className="w-4 h-4 text-[#C4D0C4]" />
+              <CreditCard className="w-4 h-4 text-white" />
               <span>M-Pesa Paybill</span>
             </button>
 
             <button
               id="tenant-banner-logout-btn"
               onClick={logout}
-              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-[#D17A5E] text-white text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5"
+              className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-rose-600 text-white text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5 border border-white/20"
             >
-              <LogOut className="w-4 h-4 text-[#F5D8CF]" />
+              <LogOut className="w-4 h-4 text-rose-200" />
               <span>Log Out</span>
             </button>
           </div>
@@ -154,13 +154,13 @@ export const TenantDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Sub-Tabs for Tenant */}
-      <div className="flex items-center space-x-1 glass-panel p-1.5 rounded-2xl border border-white/80 overflow-x-auto no-scrollbar">
+      <div className="flex items-center space-x-1 glass-panel p-1.5 rounded-2xl border border-slate-200/80 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveSubTab('overview')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
             activeSubTab === 'overview'
-              ? 'bg-[#5A6D5A] text-white shadow-xs'
-              : 'text-[#8C8880] hover:text-[#2C362C]'
+              ? 'bg-[#0045A5] text-white shadow-xs'
+              : 'text-[#64748B] hover:text-[#0F172A]'
           }`}
         >
           Apartment & Tickets ({myRequests.length})
@@ -170,8 +170,8 @@ export const TenantDashboard: React.FC = () => {
           onClick={() => setActiveSubTab('report')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center space-x-1.5 ${
             activeSubTab === 'report'
-              ? 'bg-[#5A6D5A] text-white shadow-xs'
-              : 'text-[#8C8880] hover:text-[#2C362C]'
+              ? 'bg-[#0045A5] text-white shadow-xs'
+              : 'text-[#64748B] hover:text-[#0F172A]'
           }`}
         >
           <Camera className="w-3.5 h-3.5" />
@@ -182,8 +182,8 @@ export const TenantDashboard: React.FC = () => {
           onClick={() => setActiveSubTab('mpesa')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center space-x-1.5 ${
             activeSubTab === 'mpesa'
-              ? 'bg-[#5A6D5A] text-white shadow-xs'
-              : 'text-[#8C8880] hover:text-[#2C362C]'
+              ? 'bg-[#0045A5] text-white shadow-xs'
+              : 'text-[#64748B] hover:text-[#0F172A]'
           }`}
         >
           <CreditCard className="w-3.5 h-3.5" />
@@ -199,17 +199,17 @@ export const TenantDashboard: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between pb-1">
               <div>
-                <h2 className="text-lg font-serif text-[#2C362C]">
+                <h2 className="text-lg font-bold text-[#0F172A]">
                   My Maintenance & Repair Tickets
                 </h2>
-                <p className="text-xs text-[#8C8880]">
+                <p className="text-xs text-[#64748B]">
                   Live updates on landlord reviews and fundi technician visits.
                 </p>
               </div>
 
               <button
                 onClick={() => setActiveSubTab('report')}
-                className="text-xs font-semibold text-[#4A5D4A] hover:underline"
+                className="text-xs font-semibold text-[#0045A5] hover:underline"
               >
                 + New Report
               </button>
@@ -220,12 +220,12 @@ export const TenantDashboard: React.FC = () => {
                 {myRequests.map(req => (
                   <div
                     key={req.id}
-                    className="p-5 rounded-[24px] glass-card glass-card-hover border border-white/80 space-y-3"
+                    className="p-5 rounded-[24px] glass-card glass-card-hover border border-slate-200/80 space-y-3"
                   >
                     {/* Header: Ticket & Status */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-md bg-[#FAF8F5] text-[#4A5D4A] border border-[#EDE8DF]">
+                        <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-[#0045A5] border border-slate-200">
                           {req.ticketNumber}
                         </span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${priorityBadges[req.priority]}`}>
@@ -240,10 +240,10 @@ export const TenantDashboard: React.FC = () => {
 
                     {/* Title & Desc */}
                     <div>
-                      <h3 className="font-semibold text-sm text-[#2C362C]">
+                      <h3 className="font-semibold text-sm text-[#0F172A]">
                         {req.title}
                       </h3>
-                      <p className="text-xs text-[#555555] mt-1 leading-relaxed">
+                      <p className="text-xs text-[#475569] mt-1 leading-relaxed">
                         {req.description}
                       </p>
                     </div>
@@ -255,7 +255,7 @@ export const TenantDashboard: React.FC = () => {
                           <div
                             key={i}
                             onClick={() => openPhotoViewer(req.photos, i, req.title)}
-                            className="w-14 h-14 rounded-xl overflow-hidden border border-[#EDE8DF] cursor-pointer hover:opacity-90 transition flex-shrink-0"
+                            className="w-14 h-14 rounded-xl overflow-hidden border border-slate-200 cursor-pointer hover:opacity-90 transition shrink-0 bg-slate-100"
                           >
                             <img src={photo.url} alt="" className="w-full h-full object-cover" />
                           </div>
@@ -265,13 +265,13 @@ export const TenantDashboard: React.FC = () => {
 
                     {/* Assigned Fundi Card (if scheduled) */}
                     {req.assignedContractor && (
-                      <div className="p-3.5 rounded-2xl bg-[#F2F6F2] border border-[#D6DCD6] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                         <div className="space-y-0.5">
-                          <div className="flex items-center space-x-1.5 font-semibold text-[#2C362C]">
-                            <Wrench className="w-3.5 h-3.5 text-[#5A6D5A]" />
+                          <div className="flex items-center space-x-1.5 font-semibold text-[#0F172A]">
+                            <Wrench className="w-3.5 h-3.5 text-[#0045A5]" />
                             <span>Fundi Dispatched: {req.assignedContractor.name}</span>
                           </div>
-                          <p className="text-[#555555] text-[11px]">
+                          <p className="text-[#64748B] text-[11px]">
                             {req.assignedContractor.company} • Scheduled: <strong>{req.assignedContractor.scheduledDate}</strong> ({req.assignedContractor.estimatedArrival || 'Morning'})
                           </p>
                         </div>
@@ -291,18 +291,18 @@ export const TenantDashboard: React.FC = () => {
 
                     {/* AI Assessment Briefing */}
                     {req.aiDiagnosis && (
-                      <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#EDE8DF] text-xs space-y-1 text-[#555555]">
-                        <div className="flex items-center space-x-1 font-semibold text-[#2C362C] text-[11px]">
-                          <Sparkles className="w-3 h-3 text-[#C28B38]" />
+                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1 text-[#475569]">
+                        <div className="flex items-center space-x-1 font-semibold text-[#0F172A] text-[11px]">
+                          <Sparkles className="w-3 h-3 text-[#0045A5]" />
                           <span>AI Assessment:</span>
-                          <span className="text-[#4A5D4A] font-normal">{req.aiDiagnosis.categorySummary}</span>
+                          <span className="text-[#0045A5] font-normal">{req.aiDiagnosis.categorySummary}</span>
                         </div>
                         <p className="text-[11px]">{req.aiDiagnosis.recommendedAction}</p>
                       </div>
                     )}
 
                     {/* Footer Date */}
-                    <div className="pt-2 border-t border-[#F5F2EC] flex items-center justify-between text-[11px] text-[#8C8880]">
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#64748B]">
                       <span>Logged on {new Date(req.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                       <span>{req.timeline.length} updates</span>
                     </div>
@@ -310,17 +310,17 @@ export const TenantDashboard: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="p-10 rounded-[24px] bg-white border border-[#EDE8DF] text-center space-y-3">
-                <CheckCircle2 className="w-10 h-10 text-[#5A6D5A] mx-auto opacity-70" />
-                <h3 className="font-semibold text-sm text-[#2C362C]">
+              <div className="p-10 rounded-[24px] bg-white border border-slate-200 text-center space-y-3">
+                <CheckCircle2 className="w-10 h-10 text-[#0045A5] mx-auto opacity-70" />
+                <h3 className="font-semibold text-sm text-[#0F172A]">
                   No active maintenance issues
                 </h3>
-                <p className="text-xs text-[#8C8880] max-w-sm mx-auto">
+                <p className="text-xs text-[#64748B] max-w-sm mx-auto">
                   Everything in your unit is in working order. If you notice a leak, broken latch, or electrical issue, click below.
                 </p>
                 <button
                   onClick={() => setActiveSubTab('report')}
-                  className="px-4 py-2 rounded-xl bg-[#5A6D5A] hover:bg-[#4D5E4D] text-white text-xs font-semibold shadow-xs"
+                  className="px-4 py-2 rounded-xl bg-[#0045A5] hover:bg-[#003882] text-white text-xs font-semibold shadow-xs"
                 >
                   Report Damage Photo
                 </button>
@@ -332,29 +332,29 @@ export const TenantDashboard: React.FC = () => {
           <div className="space-y-5">
             
             {/* Rent & M-Pesa Summary Card */}
-            <div className="p-6 rounded-[24px] glass-card border border-white/80 space-y-4">
+            <div className="p-6 rounded-[24px] glass-card border border-slate-200/80 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-serif font-bold text-sm text-[#2C362C]">
+                <h3 className="font-bold text-sm text-[#0F172A]">
                   Lease & Monthly Rent
                 </h3>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F2F6F2] text-[#4A5D4A]">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Active Lease
                 </span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white/70 border border-[#EDE8DF]/70 space-y-2">
-                <div className="text-xs text-[#8C8880]">Monthly Rent:</div>
-                <div className="text-2xl font-serif font-bold text-[#2C362C]">
+              <div className="p-4 rounded-2xl bg-white/80 border border-slate-200 space-y-2">
+                <div className="text-xs text-[#64748B]">Monthly Rent:</div>
+                <div className="text-2xl font-extrabold text-[#0F172A]">
                   KSh {rentAmount.toLocaleString()}
                 </div>
-                <div className="text-[11px] text-[#4A5D4A] font-semibold">
+                <div className="text-[11px] text-[#0045A5] font-semibold">
                   M-Pesa Account: <span className="font-mono">{mpesaAccount}</span>
                 </div>
               </div>
 
               <button
                 onClick={() => setActiveSubTab('mpesa')}
-                className="w-full py-2.5 rounded-xl bg-[#5A6D5A] hover:bg-[#4D5E4D] text-white text-xs font-semibold shadow-xs transition flex items-center justify-center space-x-1.5"
+                className="w-full py-2.5 rounded-xl bg-[#0045A5] hover:bg-[#003882] text-white text-xs font-semibold shadow-xs transition flex items-center justify-center space-x-1.5"
               >
                 <CreditCard className="w-3.5 h-3.5" />
                 <span>Pay Rent via M-Pesa</span>
@@ -362,15 +362,15 @@ export const TenantDashboard: React.FC = () => {
             </div>
 
             {/* Estate Caretaker Card */}
-            <div className="p-6 rounded-[24px] glass-card border border-white/80 space-y-3">
-              <h3 className="font-serif font-bold text-sm text-[#2C362C] flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-[#5A6D5A]" />
+            <div className="p-6 rounded-[24px] glass-card border border-slate-200/80 space-y-3">
+              <h3 className="font-bold text-sm text-[#0F172A] flex items-center space-x-2">
+                <Phone className="w-4 h-4 text-[#0045A5]" />
                 <span>Caretaker & Assistance</span>
               </h3>
 
-              <div className="p-3.5 rounded-xl bg-white/70 border border-[#EDE8DF]/70 space-y-1.5 text-xs">
-                <p className="font-semibold text-[#2C362C]">{property.caretakerContact?.name || 'Mwangi Kamau (Caretaker)'}</p>
-                <p className="text-[#8C8880] text-[11px]">Phone: {property.caretakerContact?.phone || '+254 722 123 456'}</p>
+              <div className="p-3.5 rounded-xl bg-white/80 border border-slate-200 space-y-1.5 text-xs">
+                <p className="font-semibold text-[#0F172A]">{property.caretakerContact?.name || 'Mwangi Kamau (Caretaker)'}</p>
+                <p className="text-[#64748B] text-[11px]">Phone: {property.caretakerContact?.phone || '+254 722 123 456'}</p>
                 
                 {property.caretakerContact?.whatsApp && (
                   <a
@@ -385,7 +385,7 @@ export const TenantDashboard: React.FC = () => {
                 )}
               </div>
 
-              <div className="text-[11px] text-[#8C8880] space-y-1 pt-1">
+              <div className="text-[11px] text-[#64748B] space-y-1 pt-1">
                 <p>• Garbage collection: Monday & Thursday morning</p>
                 <p>• Borehole & Water: 24/7 continuous supply</p>
                 <p>• Gate Security: Contact gate via intercom dial 01</p>
@@ -399,7 +399,7 @@ export const TenantDashboard: React.FC = () => {
 
       {/* Sub-View: Report Breakage */}
       {activeSubTab === 'report' && (
-        <div className="glass-card rounded-[28px] border border-white/80 p-6 shadow-sm">
+        <div className="glass-card rounded-[28px] border border-slate-200/80 p-6 shadow-sm">
           <TenantReportPortal />
         </div>
       )}
@@ -411,34 +411,34 @@ export const TenantDashboard: React.FC = () => {
             <div className="w-12 h-12 rounded-2xl bg-[#00A859]/10 text-[#00A859] flex items-center justify-center mx-auto">
               <CreditCard className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-serif text-[#2C362C]">
+            <h2 className="text-2xl font-extrabold text-[#0F172A]">
               M-Pesa Rent Payment
             </h2>
-            <p className="text-xs text-[#8C8880]">
+            <p className="text-xs text-[#64748B]">
               Pay instantly to the building Safaricom M-Pesa Paybill.
             </p>
           </div>
 
           {/* Paybill Instructions Box */}
-          <div className="p-5 rounded-2xl bg-[#FAF8F5] border border-[#EDE8DF] space-y-3 text-xs">
-            <div className="flex justify-between items-center pb-2 border-b border-[#EDE8DF]">
-              <span className="text-[#8C8880]">Business Paybill:</span>
-              <span className="font-mono font-bold text-sm text-[#2C362C]">{paybillNumber}</span>
+          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+              <span className="text-[#64748B]">Business Paybill:</span>
+              <span className="font-mono font-bold text-sm text-[#0F172A]">{paybillNumber}</span>
             </div>
-            <div className="flex justify-between items-center pb-2 border-b border-[#EDE8DF]">
-              <span className="text-[#8C8880]">Account Number:</span>
-              <span className="font-mono font-bold text-sm text-[#4A5D4A]">{mpesaAccount}</span>
+            <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+              <span className="text-[#64748B]">Account Number:</span>
+              <span className="font-mono font-bold text-sm text-[#0045A5]">{mpesaAccount}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#8C8880]">Monthly Amount:</span>
-              <span className="font-serif font-bold text-base text-[#2C362C]">KSh {rentAmount.toLocaleString()}</span>
+              <span className="text-[#64748B]">Monthly Amount:</span>
+              <span className="font-extrabold text-base text-[#0F172A]">KSh {rentAmount.toLocaleString()}</span>
             </div>
           </div>
 
           {/* STK Push Simulator */}
           <form onSubmit={handleSimulateSTKPush} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#8C8880] mb-1">
+              <label className="block text-xs font-semibold text-[#64748B] mb-1">
                 Safaricom M-Pesa Mobile Number
               </label>
               <input
@@ -447,7 +447,7 @@ export const TenantDashboard: React.FC = () => {
                 value={mpesaPhoneNumber}
                 onChange={e => setMpesaPhoneNumber(e.target.value)}
                 placeholder="+254 712 345 678"
-                className="w-full text-xs sm:text-sm rounded-xl border border-[#EDE8DF] bg-[#FAF8F5] px-3.5 py-2.5 focus:bg-white focus:outline-none"
+                className="w-full text-xs sm:text-sm rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 focus:bg-white focus:outline-hidden focus:border-[#0045A5]"
               />
             </div>
 
@@ -472,13 +472,13 @@ export const TenantDashboard: React.FC = () => {
 
           {/* Success Dialog */}
           {mpesaSuccess && (
-            <div className="p-4 rounded-2xl bg-[#F2F6F2] border border-[#D6DCD6] text-xs space-y-2 animate-fadeIn">
-              <div className="flex items-center space-x-2 font-bold text-[#4A5D4A]">
-                <CheckCircle2 className="w-4 h-4" />
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2 animate-fadeIn">
+              <div className="flex items-center space-x-2 font-bold text-emerald-800">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>M-Pesa Payment Confirmed!</span>
               </div>
-              <p className="text-[#555555]">
-                Receipt <strong className="font-mono text-[#2C362C]">{mpesaSuccess}</strong> Confirmed. KSh {rentAmount.toLocaleString()} paid to Haven Properties ({property.name} Unit {currentUser?.unitNumber || '4B'}).
+              <p className="text-emerald-700">
+                Receipt <strong className="font-mono text-[#0F172A]">{mpesaSuccess}</strong> Confirmed. KSh {rentAmount.toLocaleString()} paid to EstateFlow Properties ({property.name} Unit {currentUser?.unitNumber || '4B'}).
               </p>
             </div>
           )}

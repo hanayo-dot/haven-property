@@ -69,18 +69,18 @@ export const MaintenanceHub: React.FC = () => {
   });
 
   const priorityBadges = {
-    Emergency: 'bg-[#FBF1EE] text-[#D17A5E]',
-    High: 'bg-[#FAF4EB] text-[#C28B38]',
-    Medium: 'bg-[#F2F6F2] text-[#4A5D4A]',
-    Low: 'bg-[#F5F2EC] text-[#7A7A72]',
+    Emergency: 'bg-rose-50 text-rose-600 border border-rose-200',
+    High: 'bg-amber-50 text-amber-700 border border-amber-200',
+    Medium: 'bg-blue-50 text-[#0045A5] border border-blue-200',
+    Low: 'bg-slate-100 text-[#64748B] border border-slate-200',
   };
 
   const statusColumns: { id: IssueStatus; label: string; icon: string; accentColor: string }[] = [
-    { id: 'New', label: 'New', icon: '📥', accentColor: 'bg-[#7A8A7A]' },
-    { id: 'Under Review', label: 'Under Review', icon: '🔍', accentColor: 'bg-[#C28B38]' },
-    { id: 'Scheduled', label: 'Scheduled', icon: '🗓️', accentColor: 'bg-[#5A6D5A]' },
-    { id: 'In Progress', label: 'In Progress', icon: '⚡', accentColor: 'bg-[#D17A5E]' },
-    { id: 'Resolved', label: 'Resolved', icon: '✅', accentColor: 'bg-[#2C362C]' },
+    { id: 'New', label: 'New', icon: '📥', accentColor: 'bg-slate-500' },
+    { id: 'Under Review', label: 'Under Review', icon: '🔍', accentColor: 'bg-amber-500' },
+    { id: 'Scheduled', label: 'Scheduled', icon: '🗓️', accentColor: 'bg-blue-600' },
+    { id: 'In Progress', label: 'In Progress', icon: '⚡', accentColor: 'bg-sky-500' },
+    { id: 'Resolved', label: 'Resolved', icon: '✅', accentColor: 'bg-[#0045A5]' },
   ];
 
   const hasActiveFilters = selectedCategory !== 'all' || selectedPriority !== 'all' || selectedProperty !== 'all' || searchQuery.trim() !== '';
@@ -99,27 +99,27 @@ export const MaintenanceHub: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-2xl sm:text-3xl font-serif text-[#2C362C] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
               Maintenance & Fundi Dispatch
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#F5F2EC] text-[#4A5D4A]">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-blue-50 text-[#0045A5] border border-blue-200">
               {filteredRequests.length} Tickets
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#8C8880] mt-0.5">
+          <p className="text-xs sm:text-sm text-[#64748B] mt-0.5">
             Damage photos, AI repair assessment (KSh), and WhatsApp fundi dispatch across Nairobi.
           </p>
         </div>
 
         {/* View mode toggle & quick report */}
         <div className="flex items-center space-x-2 sm:space-x-2.5">
-          <div className="flex items-center bg-[#F5F2EC] p-1 rounded-xl">
+          <div className="flex items-center bg-slate-100 p-1 rounded-xl">
             <button
               onClick={() => setViewLayout('kanban')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
                 viewLayout === 'kanban'
-                  ? 'bg-white text-[#2C362C] shadow-xs'
-                  : 'text-[#8C8880] hover:text-[#2C362C]'
+                  ? 'bg-white text-[#0F172A] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#0F172A]'
               }`}
               title="Kanban Board View"
             >
@@ -130,8 +130,8 @@ export const MaintenanceHub: React.FC = () => {
               onClick={() => setViewLayout('list')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
                 viewLayout === 'list'
-                  ? 'bg-white text-[#2C362C] shadow-xs'
-                  : 'text-[#8C8880] hover:text-[#2C362C]'
+                  ? 'bg-white text-[#0F172A] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#0F172A]'
               }`}
               title="List View"
             >
@@ -143,16 +143,16 @@ export const MaintenanceHub: React.FC = () => {
           <button
             onClick={exportMaintenanceCSV}
             title="Download CSV export of all maintenance records"
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#F5F2EC] text-[#2C362C] border border-[#EDE8DF] text-xs font-semibold transition"
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-[#0F172A] border border-slate-200 text-xs font-semibold transition"
           >
-            <Download className="w-3.5 h-3.5 text-[#5A6D5A]" />
+            <Download className="w-3.5 h-3.5 text-[#0045A5]" />
             <span className="hidden sm:inline">Export CSV</span>
           </button>
 
           <button
             id="maintenance-hub-new-report-btn"
             onClick={() => setIsReportModalOpen(true)}
-            className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#D17A5E] hover:bg-[#c26e54] text-white text-xs sm:text-sm font-semibold shadow-xs transition active:scale-95"
+            className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#0045A5] hover:bg-[#003882] text-white text-xs sm:text-sm font-semibold shadow-xs transition active:scale-95"
           >
             <Camera className="w-4 h-4" />
             <span>Report Breakage</span>
@@ -162,23 +162,23 @@ export const MaintenanceHub: React.FC = () => {
 
       {/* Emergency Alert Banner (if any emergency exists) */}
       {stats.emergencyIssues > 0 && (
-        <div className="p-4 rounded-[20px] bg-[#FBF1EE] border border-[#F5D8CF] flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-[20px] bg-rose-50 border border-rose-200 flex items-center justify-between shadow-xs">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#D17A5E] text-white flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0">
               <AlertTriangle className="w-4 h-4 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-semibold text-[#D17A5E]">
+              <h3 className="text-xs sm:text-sm font-semibold text-rose-700">
                 {stats.emergencyIssues} Emergency Ticket{stats.emergencyIssues > 1 ? 's' : ''} Require Immediate Fundi Action
               </h3>
-              <p className="text-[11px] text-[#8C8880]">
+              <p className="text-[11px] text-[#64748B]">
                 Active water leak or electrical hazard reported with resident photos.
               </p>
             </div>
           </div>
           <button
             onClick={() => setSelectedPriority('Emergency')}
-            className="px-3.5 py-1.5 rounded-lg bg-[#D17A5E] hover:bg-[#c26e54] text-white text-xs font-semibold shadow-xs transition"
+            className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition"
           >
             Show Emergency
           </button>
@@ -186,18 +186,18 @@ export const MaintenanceHub: React.FC = () => {
       )}
 
       {/* Search & Filter Bar */}
-      <div className="p-4 sm:p-5 rounded-[24px] glass-card border border-white/80 space-y-3.5">
+      <div className="p-4 sm:p-5 rounded-[24px] glass-card border border-slate-200/80 space-y-3.5">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C8880]" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B]" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search by ticket #, description, tenant name, or unit..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-xs text-[#2C362C] placeholder-[#8C8880] focus:outline-hidden"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-hidden"
             />
           </div>
 
@@ -206,7 +206,7 @@ export const MaintenanceHub: React.FC = () => {
             <select
               value={selectedProperty}
               onChange={e => setSelectedProperty(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl glass-input text-[#2C362C] focus:outline-hidden"
+              className="text-xs py-2 px-3 rounded-xl glass-input text-[#0F172A] focus:outline-hidden"
             >
               <option value="all">All Properties</option>
               {properties.map(p => (
@@ -217,7 +217,7 @@ export const MaintenanceHub: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl glass-input text-[#2C362C] focus:outline-hidden"
+              className="text-xs py-2 px-3 rounded-xl glass-input text-[#0F172A] focus:outline-hidden"
             >
               <option value="all">All Categories</option>
               <option value="Plumbing">Plumbing</option>
@@ -233,7 +233,7 @@ export const MaintenanceHub: React.FC = () => {
             <select
               value={selectedPriority}
               onChange={e => setSelectedPriority(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl glass-input text-[#2C362C] focus:outline-hidden"
+              className="text-xs py-2 px-3 rounded-xl glass-input text-[#0F172A] focus:outline-hidden"
             >
               <option value="all">All Priorities</option>
               <option value="Emergency">🚨 Emergency</option>
@@ -245,7 +245,7 @@ export const MaintenanceHub: React.FC = () => {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="p-2 text-[#8C8880] hover:text-[#D17A5E] rounded-lg transition text-xs font-semibold flex items-center space-x-1"
+                className="p-2 text-[#64748B] hover:text-rose-600 rounded-lg transition text-xs font-semibold flex items-center space-x-1"
                 title="Clear all search and filters"
               >
                 <X className="w-4 h-4" />
@@ -256,7 +256,7 @@ export const MaintenanceHub: React.FC = () => {
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex items-center space-x-1.5 overflow-x-auto pt-1 no-scrollbar border-t border-[#F5F2EC]">
+        <div className="flex items-center space-x-1.5 overflow-x-auto pt-1 no-scrollbar border-t border-slate-100">
           {['all', 'New', 'Under Review', 'Scheduled', 'In Progress', 'Resolved'].map(status => {
             const count = status === 'all' 
               ? maintenanceRequests.length 
@@ -268,8 +268,8 @@ export const MaintenanceHub: React.FC = () => {
                 onClick={() => setSelectedStatus(status)}
                 className={`text-xs px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition ${
                   isSelected
-                    ? 'bg-[#5A6D5A] text-white font-semibold shadow-xs'
-                    : 'text-[#8C8880] hover:text-[#2C362C] hover:bg-white/60'
+                    ? 'bg-[#0045A5] text-white font-semibold shadow-xs'
+                    : 'text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100'
                 }`}
               >
                 {status === 'all' ? 'All Tickets' : status} ({count})
@@ -287,17 +287,17 @@ export const MaintenanceHub: React.FC = () => {
             return (
               <div 
                 key={col.id} 
-                className="rounded-[22px] glass-panel border border-white/70 p-3 flex flex-col min-h-[480px]"
+                className="rounded-[22px] glass-panel border border-slate-200/80 p-3 flex flex-col min-h-[480px]"
               >
                 {/* Column Header */}
                 <div className="flex items-center justify-between mb-3 px-1">
                   <div className="flex items-center space-x-1.5">
                     <span className="text-xs">{col.icon}</span>
-                    <h3 className="font-semibold text-xs text-[#2C362C]">
+                    <h3 className="font-semibold text-xs text-[#0F172A]">
                       {col.label}
                     </h3>
                   </div>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white text-[#5A6D5A] border border-[#EDE8DF]">
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white text-[#0045A5] border border-slate-200">
                     {columnRequests.length}
                   </span>
                 </div>
@@ -308,11 +308,11 @@ export const MaintenanceHub: React.FC = () => {
                     <div
                       key={request.id}
                       onClick={() => setSelectedRequestId(request.id)}
-                      className="group p-3.5 rounded-[18px] glass-card glass-card-hover border border-white/80 transition cursor-pointer space-y-2"
+                      className="group p-3.5 rounded-[18px] glass-card glass-card-hover border border-slate-200/80 transition cursor-pointer space-y-2"
                     >
                       {/* Card Top: Ticket # & Priority */}
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono text-[#8C8880]">
+                        <span className="text-[10px] font-mono text-[#64748B]">
                           {request.ticketNumber}
                         </span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${priorityBadges[request.priority]}`}>
@@ -321,12 +321,12 @@ export const MaintenanceHub: React.FC = () => {
                       </div>
 
                       {/* Property & Unit */}
-                      <div className="text-xs text-[#8C8880] truncate">
-                        <span className="font-semibold text-[#2C362C]">Unit {request.unitNumber}</span> • {request.propertyName}
+                      <div className="text-xs text-[#64748B] truncate">
+                        <span className="font-semibold text-[#0F172A]">Unit {request.unitNumber}</span> • {request.propertyName}
                       </div>
 
                       {/* Title */}
-                      <h4 className="text-xs font-semibold text-[#2C362C] leading-snug line-clamp-2 group-hover:text-[#5A6D5A] transition">
+                      <h4 className="text-xs font-semibold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0045A5] transition">
                         {request.title}
                       </h4>
 
@@ -337,7 +337,7 @@ export const MaintenanceHub: React.FC = () => {
                             e.stopPropagation();
                             openPhotoViewer(request.photos, 0, `${request.ticketNumber}: ${request.title}`);
                           }}
-                          className="relative rounded-xl overflow-hidden aspect-video bg-[#F5F2EC] border border-[#EDE8DF]"
+                          className="relative rounded-xl overflow-hidden aspect-video bg-slate-100 border border-slate-200"
                         >
                           <img
                             src={request.photos[0].url}
@@ -351,7 +351,7 @@ export const MaintenanceHub: React.FC = () => {
                       )}
 
                       {/* Assigned Fundi / Time Info */}
-                      <div className="pt-2 border-t border-[#F5F2EC] flex items-center justify-between text-[10px] text-[#8C8880]">
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-[#64748B]">
                         <span className="truncate">{request.assignedContractor ? request.assignedContractor.name : request.tenantName}</span>
                         <span>{new Date(request.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
                       </div>
@@ -359,7 +359,7 @@ export const MaintenanceHub: React.FC = () => {
                   ))}
 
                   {columnRequests.length === 0 && (
-                    <div className="py-12 text-center text-xs text-[#A09C94] font-light">
+                    <div className="py-12 text-center text-xs text-[#94A3B8] font-light">
                       No tickets
                     </div>
                   )}
@@ -370,59 +370,59 @@ export const MaintenanceHub: React.FC = () => {
         </div>
       ) : (
         /* List View */
-        <div className="rounded-[22px] bg-white border border-[#EDE8DF]/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
-          <div className="divide-y divide-[#F5F2EC]">
+        <div className="rounded-[22px] bg-white border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+          <div className="divide-y divide-slate-100">
             {filteredRequests.map(req => (
               <div
                 key={req.id}
                 onClick={() => setSelectedRequestId(req.id)}
-                className="p-4 sm:p-5 hover:bg-[#FAF8F5] transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="p-4 sm:p-5 hover:bg-slate-50 transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="flex items-start space-x-3.5 flex-1 min-w-0">
                   {req.photos[0] ? (
                     <img 
                       src={req.photos[0].url} 
                       alt="" 
-                      className="w-12 h-12 rounded-xl object-cover border border-[#EDE8DF] flex-shrink-0"
+                      className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-xl bg-[#F5F2EC] flex items-center justify-center text-[#8C8880] flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-[#64748B] shrink-0">
                       <Wrench className="w-4 h-4" />
                     </div>
                   )}
 
                   <div className="space-y-0.5 flex-1 min-w-0">
                     <div className="flex items-center space-x-2 text-xs">
-                      <span className="font-mono text-[#8C8880]">{req.ticketNumber}</span>
+                      <span className="font-mono text-[#64748B]">{req.ticketNumber}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${priorityBadges[req.priority]}`}>
                         {req.priority}
                       </span>
-                      <span className="text-[#8C8880]">
+                      <span className="text-[#64748B]">
                         {req.propertyName} • Unit {req.unitNumber}
                       </span>
                     </div>
 
-                    <h3 className="text-sm font-semibold text-[#2C362C] truncate">
+                    <h3 className="text-sm font-semibold text-[#0F172A] truncate">
                       {req.title}
                     </h3>
 
-                    <p className="text-xs text-[#8C8880] truncate">
+                    <p className="text-xs text-[#64748B] truncate">
                       Resident: {req.tenantName} • Fundi: {req.assignedContractor ? req.assignedContractor.name : 'Unassigned'}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end space-x-3 flex-shrink-0">
-                  <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-[#F5F2EC] text-[#2C362C]">
+                <div className="flex items-center justify-between sm:justify-end space-x-3 shrink-0">
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 text-[#0F172A]">
                     {req.status}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-[#8C8880]" />
+                  <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
                 </div>
               </div>
             ))}
 
             {filteredRequests.length === 0 && (
-              <div className="py-16 text-center text-xs text-[#8C8880]">
+              <div className="py-16 text-center text-xs text-[#64748B]">
                 No maintenance requests match the current filters.
               </div>
             )}

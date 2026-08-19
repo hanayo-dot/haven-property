@@ -55,15 +55,15 @@ export const PhotoViewerModal: React.FC = () => {
     <div 
       id="photo-viewer-backdrop"
       onClick={closePhotoViewer}
-      className="fixed inset-0 z-50 bg-[#2C362C]/90 backdrop-blur-md flex flex-col justify-between p-3 sm:p-6 select-none animate-fadeIn"
+      className="fixed inset-0 z-50 bg-[#0F172A]/90 backdrop-blur-md flex flex-col justify-between p-3 sm:p-6 select-none animate-fadeIn"
     >
       {/* Top Bar */}
-      <div className="flex items-center justify-between text-[#FDFBF7] z-10">
+      <div className="flex items-center justify-between text-white z-10">
         <div className="flex items-center space-x-3">
-          <div className="bg-[#3D4B3D]/80 border border-[#5A6D5A]/40 px-3.5 py-1.5 rounded-full text-xs font-semibold">
+          <div className="bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full text-xs font-semibold backdrop-blur-xs">
             Photo {currentIndex + 1} of {photoViewer.photos.length}
           </div>
-          <span className="text-sm font-medium text-[#ECE9E1] hidden sm:inline">
+          <span className="text-sm font-medium text-slate-200 hidden sm:inline">
             {photoViewer.title}
           </span>
         </div>
@@ -75,14 +75,14 @@ export const PhotoViewerModal: React.FC = () => {
               setIsZoomed(!isZoomed);
             }}
             title={isZoomed ? "Zoom Out" : "Zoom In"}
-            className="p-2.5 rounded-full bg-[#3D4B3D]/80 hover:bg-[#4E5E4E] text-[#ECE9E1] transition"
+            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
           >
             {isZoomed ? <ZoomOut className="w-5 h-5" /> : <ZoomIn className="w-5 h-5" />}
           </button>
           <button
             id="close-photo-viewer-btn"
             onClick={closePhotoViewer}
-            className="p-2.5 rounded-full bg-[#3D4B3D]/80 hover:bg-[#4E5E4E] text-[#FDFBF7] transition hover:scale-105"
+            className="p-2.5 rounded-full bg-white/10 hover:bg-rose-600 text-white transition hover:scale-105"
           >
             <X className="w-5 h-5" />
           </button>
@@ -98,7 +98,7 @@ export const PhotoViewerModal: React.FC = () => {
           <button
             id="prev-photo-btn"
             onClick={handlePrev}
-            className="absolute left-2 sm:left-4 z-10 p-3 rounded-full bg-[#2C362C]/80 hover:bg-[#3D4B3D] text-[#FDFBF7] border border-[#5A6D5A]/40 shadow-xl transition"
+            className="absolute left-2 sm:left-4 z-10 p-3 rounded-full bg-[#0F172A]/80 hover:bg-[#1E293B] text-white border border-white/20 shadow-xl transition"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -119,7 +119,7 @@ export const PhotoViewerModal: React.FC = () => {
           <button
             id="next-photo-btn"
             onClick={handleNext}
-            className="absolute right-2 sm:right-4 z-10 p-3 rounded-full bg-[#2C362C]/80 hover:bg-[#3D4B3D] text-[#FDFBF7] border border-[#5A6D5A]/40 shadow-xl transition"
+            className="absolute right-2 sm:right-4 z-10 p-3 rounded-full bg-[#0F172A]/80 hover:bg-[#1E293B] text-white border border-white/20 shadow-xl transition"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
@@ -128,36 +128,36 @@ export const PhotoViewerModal: React.FC = () => {
 
       {/* Bottom Info Bar & Thumbnails */}
       <div 
-        className="bg-[#2C362C]/95 border border-[#5A6D5A]/30 rounded-3xl p-5 max-w-2xl mx-auto w-full text-[#FDFBF7] z-10 shadow-2xl"
+        className="bg-[#0F172A]/95 border border-white/15 rounded-3xl p-5 max-w-2xl mx-auto w-full text-white z-10 shadow-2xl backdrop-blur-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2">
             {activePhoto.tag && (
-              <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold bg-[#5A6D5A] text-white">
+              <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold bg-[#0045A5] text-white">
                 <Tag className="w-3 h-3 mr-1" />
                 {activePhoto.tag}
               </span>
             )}
             {activePhoto.timestamp && (
-              <span className="inline-flex items-center text-xs text-[#ECE9E1]/80">
-                <Calendar className="w-3 h-3 mr-1 text-[#5A6D5A]" />
+              <span className="inline-flex items-center text-xs text-slate-300">
+                <Calendar className="w-3 h-3 mr-1 text-sky-400" />
                 {new Date(activePhoto.timestamp).toLocaleDateString()} at {new Date(activePhoto.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
           </div>
-          <span className="text-xs text-[#ECE9E1]/60">Click photo to zoom</span>
+          <span className="text-xs text-slate-400">Click photo to zoom</span>
         </div>
 
         {activePhoto.caption && (
-          <p className="text-sm text-[#FDFBF7] font-medium mt-1">
+          <p className="text-sm text-slate-100 font-medium mt-1">
             "{activePhoto.caption}"
           </p>
         )}
 
         {/* Thumbnails Row */}
         {photoViewer.photos.length > 1 && (
-          <div className="flex items-center space-x-2 mt-3 pt-3 border-t border-[#5A6D5A]/30 overflow-x-auto pb-1">
+          <div className="flex items-center space-x-2 mt-3 pt-3 border-t border-white/10 overflow-x-auto pb-1">
             {photoViewer.photos.map((p, idx) => (
               <button
                 key={p.id || idx}
@@ -165,8 +165,8 @@ export const PhotoViewerModal: React.FC = () => {
                   setIsZoomed(false);
                   setCurrentIndex(idx);
                 }}
-                className={`relative rounded-xl overflow-hidden flex-shrink-0 w-14 h-14 border-2 transition ${
-                  idx === currentIndex ? 'border-[#D17A5E] ring-2 ring-[#D17A5E]/40 scale-105' : 'border-[#5A6D5A]/40 opacity-60 hover:opacity-100'
+                className={`relative rounded-xl overflow-hidden shrink-0 w-14 h-14 border-2 transition ${
+                  idx === currentIndex ? 'border-[#38BDF8] ring-2 ring-[#38BDF8]/50 scale-105' : 'border-white/20 opacity-60 hover:opacity-100'
                 }`}
               >
                 <img src={p.url} alt="" className="w-full h-full object-cover" />

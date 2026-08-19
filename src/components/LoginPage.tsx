@@ -19,6 +19,7 @@ import {
   AlertCircle,
   Loader2,
   UserPlus,
+  Home,
   X
 } from 'lucide-react';
 import { User, UserRole } from '../types';
@@ -84,29 +85,29 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     setLocalError(null);
 
     if (!regName.trim()) {
-      setLocalError('Please enter your full name.');
+      setLocalError('Please provide your full name.');
       return;
     }
     if (!regEmail.trim() && !regPhone.trim()) {
-      setLocalError('Please provide an email address or Kenyan phone number.');
+      setLocalError('Please provide either an email or a valid Kenyan phone number (+254...).');
       return;
     }
 
-    const selectedProp = properties.find(p => p.id === regPropertyId) || properties[0];
-
     setIsLoading(true);
     try {
+      const selectedProp = properties.find(p => p.id === regPropertyId);
       await register({
-        name: regName,
-        email: regEmail,
-        phone: regPhone,
-        password: regPassword || 'haven2026',
+        name: regName.trim(),
+        email: regEmail.trim() || `${regName.toLowerCase().replace(/\s+/g, '.')}@estateflow.co.ke`,
+        phone: regPhone.trim() || '+254 700 000 000',
         role: regRole,
-        propertyId: regRole === 'tenant' ? selectedProp?.id : undefined,
+        propertyId: regRole === 'tenant' ? regPropertyId : undefined,
         propertyName: regRole === 'tenant' ? selectedProp?.name : undefined,
         unitNumber: regRole === 'tenant' ? regUnitNumber : undefined,
-        rentAmount: regRole === 'tenant' ? 75000 : undefined
-      });
+        avatarUrl: regRole === 'landlord'
+          ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+          : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+      }, regPassword || 'haven2026');
     } catch (err: any) {
       setLocalError(err.message || 'Registration failed. Please try again.');
     } finally {
@@ -123,7 +124,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   const content = (
-    <div className="relative glass-modal rounded-[36px] overflow-hidden border border-white/80">
+    <div className="relative glass-modal rounded-[36px] overflow-hidden border border-white/90 shadow-2xl">
       {isModal && onClose && (
         <button
           onClick={onClose}
@@ -137,10 +138,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         
         {/* Header Text */}
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#0B57D0]/10 border border-[#0B57D0]/20 text-[#0B57D0] backdrop-blur-xs">
+          <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0045A5] backdrop-blur-xs">
             Secure Kenyan Property Portal
           </span>
-          <h1 className="text-3xl sm:text-4xl font-serif text-[#0F172A] tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
             {authMode === 'signin' ? 'Sign In to Your Account' : 'Create an Account'}
           </h1>
           <p className="text-xs sm:text-sm text-[#64748B]">
@@ -152,7 +153,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* Mode Switcher Tabs */}
         <div className="flex justify-center">
-          <div className="glass-pill p-1 rounded-2xl inline-flex space-x-1">
+          <div className="glass-pill p-1 rounded-2xl inline-flex space-x-1 border border-slate-200">
             <button
               type="button"
               id="tab-signin-btn"
@@ -188,364 +189,339 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </div>
         </div>
 
-            {/* Error Message Display */}
-            {(localError || authError) && (
-              <div className="p-4 rounded-2xl bg-[#FBF1EE] border border-[#D17A5E]/20 text-[#D17A5E] text-xs flex items-center space-x-2.5 animate-fadeIn">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <p className="font-medium">{localError || authError}</p>
-              </div>
-            )}
+        {/* Error Message Display */}
+        {(localError || authError) && (
+          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start space-x-2.5 animate-fadeIn">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <p className="flex-1 font-medium">{localError || authError}</p>
+          </div>
+        )}
 
-            {/* Form Section */}
-            {authMode === 'signin' ? (
-              <form onSubmit={handleSignIn} className="space-y-4 max-w-md mx-auto">
-                
-                {/* Identifier Input (Email or Phone) */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                    Email Address or Phone Number
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8C8880]">
-                      <UserIcon className="w-4 h-4" />
-                    </div>
-                    <input
-                      id="auth-identifier-input"
-                      type="text"
-                      value={identifier}
-                      onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder="e.g. juma.ochieng@gmail.com or 0712345678"
-                      required
-                      className="w-full pl-10 pr-4 py-3 glass-input rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:outline-hidden"
-                    />
-                  </div>
-                  <p className="text-[11px] text-[#8C8880] mt-1">
-                    Accepts Kenyan format: <code className="text-[#4A5D4A]">0712345678</code> or <code className="text-[#4A5D4A]">+254 712 345 678</code> or email.
-                  </p>
-                </div>
-
-                {/* Password Input */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C]">
-                      Password / Security PIN
-                    </label>
-                    <span className="text-[11px] text-[#8C8880]">
-                      Default: <span className="font-semibold text-[#4A5D4A]">haven2026</span>
-                    </span>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8C8880]">
-                      <Lock className="w-4 h-4" />
-                    </div>
-                    <input
-                      id="auth-password-input"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password"
-                      required
-                      className="w-full pl-10 pr-10 py-3 glass-input rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:outline-hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#8C8880] hover:text-[#2C362C]"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Role Switcher Hint (Landlord vs Resident) */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                    Account Role
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      id="role-select-tenant-btn"
-                      onClick={() => setRoleHint('tenant')}
-                      className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
-                        roleHint === 'tenant'
-                          ? 'border-[#5A6D5A] bg-[#F2F6F2]/90 text-[#4A5D4A] shadow-xs'
-                          : 'border-white/80 glass-pill text-[#8C8880] hover:text-[#2C362C]'
-                      }`}
-                    >
-                      <Smartphone className="w-4 h-4" />
-                      <span>Resident Portal</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      id="role-select-landlord-btn"
-                      onClick={() => setRoleHint('landlord')}
-                      className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
-                        roleHint === 'landlord'
-                          ? 'border-[#2C362C] bg-[#2C362C] text-white shadow-xs'
-                          : 'border-white/80 glass-pill text-[#8C8880] hover:text-[#2C362C]'
-                      }`}
-                    >
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Landlord Admin</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Sign In Submit Button */}
-                <button
-                  type="submit"
-                  id="auth-submit-btn"
-                  disabled={isLoading}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#5A6D5A] hover:bg-[#4a5a4a] text-white font-semibold text-sm flex items-center justify-center space-x-2 shadow-sm transition active:scale-[0.99] disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Authenticating with Haven Go API...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Sign In with Credentials</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </form>
-            ) : (
-              /* Sign Up Form */
-              <form onSubmit={handleSignUp} className="space-y-4 max-w-md mx-auto">
-                
-                {/* Full Name */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                    Full Name
-                  </label>
-                  <input
-                    id="signup-name-input"
-                    type="text"
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    placeholder="e.g. Kevin Mwenda"
-                    required
-                    className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EDE8DF] rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:bg-white focus:border-[#5A6D5A] focus:outline-hidden transition"
-                  />
-                </div>
-
-                {/* Email & Phone */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                      Email Address
-                    </label>
-                    <input
-                      id="signup-email-input"
-                      type="email"
-                      value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="mwenda@gmail.com"
-                      className="w-full px-3.5 py-3 bg-[#FAF8F5] border border-[#EDE8DF] rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:bg-white focus:border-[#5A6D5A] focus:outline-hidden transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                      Kenyan Phone (+254)
-                    </label>
-                    <input
-                      id="signup-phone-input"
-                      type="tel"
-                      value={regPhone}
-                      onChange={(e) => setRegPhone(e.target.value)}
-                      placeholder="+254 712 000 000"
-                      className="w-full px-3.5 py-3 bg-[#FAF8F5] border border-[#EDE8DF] rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:bg-white focus:border-[#5A6D5A] focus:outline-hidden transition"
-                    />
-                  </div>
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                    Create Password
-                  </label>
-                  <input
-                    id="signup-password-input"
-                    type="password"
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                    placeholder="Create a strong password"
-                    className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EDE8DF] rounded-2xl text-sm text-[#2C362C] placeholder-[#8C8880]/60 focus:bg-white focus:border-[#5A6D5A] focus:outline-hidden transition"
-                  />
-                </div>
-
-                {/* Role */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#2C362C] mb-1.5">
-                    Account Type
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setRegRole('tenant')}
-                      className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
-                        regRole === 'tenant'
-                          ? 'border-[#5A6D5A] bg-[#F2F6F2] text-[#4A5D4A]'
-                          : 'border-[#EDE8DF] text-[#8C8880] hover:bg-[#FAF8F5]'
-                      }`}
-                    >
-                      <Smartphone className="w-4 h-4" />
-                      <span>Resident</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRegRole('landlord')}
-                      className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
-                        regRole === 'landlord'
-                          ? 'border-[#2C362C] bg-[#2C362C] text-white'
-                          : 'border-[#EDE8DF] text-[#8C8880] hover:bg-[#FAF8F5]'
-                      }`}
-                    >
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Landlord</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Tenant Property Assignment */}
-                {regRole === 'tenant' && (
-                  <div className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#EDE8DF] space-y-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[#5A6D5A]">
-                      Nairobi Residence Details
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-bold text-[#8C8880] mb-1">Estate / Property</label>
-                        <select
-                          value={regPropertyId}
-                          onChange={(e) => setRegPropertyId(e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-[#EDE8DF] rounded-xl text-xs text-[#2C362C]"
-                        >
-                          {properties.map(p => (
-                            <option key={p.id} value={p.id}>{p.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-[#8C8880] mb-1">Unit Number</label>
-                        <input
-                          type="text"
-                          value={regUnitNumber}
-                          onChange={(e) => setRegUnitNumber(e.target.value)}
-                          placeholder="e.g. 4A"
-                          className="w-full px-3 py-2 bg-white border border-[#EDE8DF] rounded-xl text-xs text-[#2C362C]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Submit Sign Up */}
-                <button
-                  type="submit"
-                  id="signup-submit-btn"
-                  disabled={isLoading}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#2C362C] hover:bg-[#1a211a] text-white font-semibold text-sm flex items-center justify-center space-x-2 shadow-sm transition active:scale-[0.99] disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Creating Account in Go Database...</span>
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4 h-4" />
-                      <span>Create Account & Log In</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-
-            {/* Quick Demo Pre-fill Cards */}
-            <div className="pt-6 border-t border-[#F2EFEA] space-y-4">
-              <div className="flex items-center justify-between text-xs font-semibold text-[#8C8880]">
-                <span>Registered Test Accounts (1-Click Fill & Instant Sign In)</span>
-                <span className="text-[11px] text-[#4A5D4A]">Safaricom & Gmail Connected</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {/* Landlord Card */}
-                {landlordUsers.map(user => (
-                  <button
-                    key={user.id}
-                    type="button"
-                    onClick={() => fillQuickPreset(user)}
-                    className="p-3.5 rounded-2xl glass-card glass-card-hover text-left transition group border border-white/80"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <img
-                        src={user.avatarUrl}
-                        alt={user.name}
-                        className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white"
-                      />
-                      <div className="overflow-hidden">
-                        <div className="flex items-center space-x-1.5">
-                          <p className="text-xs font-bold text-[#2C362C] truncate">{user.name}</p>
-                          <span className="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase bg-[#2C362C] text-white">
-                            Landlord
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[#8C8880] truncate">{user.email}</p>
-                        <p className="text-[10px] text-[#5A6D5A] font-mono">{user.phone}</p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-
-                {/* Resident Cards */}
-                {tenantUsers.slice(0, 5).map(user => (
-                  <button
-                    key={user.id}
-                    type="button"
-                    onClick={() => fillQuickPreset(user)}
-                    className="p-3.5 rounded-2xl glass-card glass-card-hover text-left transition group border border-white/80"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <img
-                        src={user.avatarUrl}
-                        alt={user.name}
-                        className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white"
-                      />
-                      <div className="overflow-hidden">
-                        <div className="flex items-center space-x-1.5">
-                          <p className="text-xs font-bold text-[#2C362C] truncate">{user.name}</p>
-                          <span className="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase bg-[#F2F6F2] text-[#4A5D4A]">
-                            Apt {user.unitNumber}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[#8C8880] truncate">{user.email}</p>
-                        <p className="text-[10px] text-[#5A6D5A] font-mono">{user.phone}</p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
+        {/* Form Container */}
+        {authMode === 'signin' ? (
+          /* Sign In Form */
+          <form onSubmit={handleSignIn} className="space-y-4 max-w-md mx-auto">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                Email Address or Mobile Phone Number *
+              </label>
+              <div className="relative">
+                <UserIcon className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+                <input
+                  id="login-identifier-input"
+                  type="text"
+                  required
+                  placeholder="e.g. juma@havenresident.co.ke or +254 712 345 678"
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 glass-input rounded-2xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:outline-hidden"
+                />
               </div>
             </div>
 
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+                  Password *
+                </label>
+                <span className="text-[11px] text-[#64748B]">Default: <strong>haven2026</strong></span>
+              </div>
+              <div className="relative">
+                <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+                <input
+                  id="login-password-input"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-10 py-3 glass-input rounded-2xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:outline-hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8] hover:text-[#0F172A]"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                Role Context
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRoleHint('tenant')}
+                  className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
+                    roleHint === 'tenant'
+                      ? 'border-[#0045A5] bg-[#0045A5] text-white shadow-xs'
+                      : 'border-slate-200 glass-pill text-[#64748B] hover:text-[#0F172A]'
+                  }`}
+                >
+                  <Home className="w-3.5 h-3.5" />
+                  <span>Resident Portal</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRoleHint('landlord')}
+                  className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
+                    roleHint === 'landlord'
+                      ? 'border-[#0045A5] bg-[#0045A5] text-white shadow-xs'
+                      : 'border-slate-200 glass-pill text-[#64748B] hover:text-[#0F172A]'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Landlord OS</span>
+                </button>
+              </div>
+            </div>
+
+            <button
+              id="login-submit-btn"
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3.5 px-4 rounded-2xl bg-[#0045A5] hover:bg-[#003882] text-white font-semibold text-sm flex items-center justify-center space-x-2 shadow-md transition active:scale-[0.99] disabled:opacity-50 mt-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Authenticating with Go API...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+        ) : (
+          /* Sign Up Form */
+          <form onSubmit={handleSignUp} className="space-y-4 max-w-lg mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Brian Kiprono"
+                  value={regName}
+                  onChange={e => setRegName(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:bg-white focus:border-[#0045A5] focus:outline-hidden transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="brian@example.com"
+                  value={regEmail}
+                  onChange={e => setRegEmail(e.target.value)}
+                  className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:bg-white focus:border-[#0045A5] focus:outline-hidden transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                  Kenyan Mobile Phone (+254)
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+254 712 345 678"
+                  value={regPhone}
+                  onChange={e => setRegPhone(e.target.value)}
+                  className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:bg-white focus:border-[#0045A5] focus:outline-hidden transition"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                  Password (optional, default: haven2026)
+                </label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={regPassword}
+                  onChange={e => setRegPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-[#0F172A] placeholder-[#94A3B8] focus:bg-white focus:border-[#0045A5] focus:outline-hidden transition"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                  Select Role
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRegRole('tenant')}
+                    className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
+                      regRole === 'tenant'
+                        ? 'border-[#0045A5] bg-[#0045A5] text-white'
+                        : 'border-slate-200 bg-slate-50 text-[#64748B]'
+                    }`}
+                  >
+                    <Home className="w-3.5 h-3.5" />
+                    <span>Resident (Tenant)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRegRole('landlord')}
+                    className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center space-x-2 transition ${
+                      regRole === 'landlord'
+                        ? 'border-[#0045A5] bg-[#0045A5] text-white'
+                        : 'border-slate-200 bg-slate-50 text-[#64748B]'
+                    }`}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Landlord / Estate Owner</span>
+                  </button>
+                </div>
+              </div>
+
+              {regRole === 'tenant' && (
+                <>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                      Nairobi Building *
+                    </label>
+                    <select
+                      value={regPropertyId}
+                      onChange={e => setRegPropertyId(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-[#0F172A] focus:border-[#0045A5] focus:outline-hidden"
+                    >
+                      {properties.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} ({p.state})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-1.5">
+                      Apartment Unit # *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 4B"
+                      value={regUnitNumber}
+                      onChange={e => setRegUnitNumber(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-[#0F172A] focus:border-[#0045A5] focus:outline-hidden"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <button
+              id="signup-submit-btn"
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3.5 px-4 rounded-2xl bg-[#0045A5] hover:bg-[#003882] text-white font-semibold text-sm flex items-center justify-center space-x-2 shadow-sm transition active:scale-[0.99] disabled:opacity-50"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Registering user with Go Backend...</span>
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" />
+                  <span>Create Account & Log In</span>
+                </>
+              )}
+            </button>
+          </form>
+        )}
+
+        {/* 1-Click Fast-Test Kenyan Profiles */}
+        <div className="pt-6 border-t border-slate-100 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#64748B] flex items-center space-x-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#0045A5]" />
+              <span>1-Click Test Personas (Preloaded in Nairobi)</span>
+            </span>
+            <span className="text-[11px] text-[#94A3B8]">Click any avatar to populate</span>
           </div>
 
-          {/* Footer Info Strip */}
-          <div className="bg-[#FAF8F5] border-t border-[#EDE8DF] px-8 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C8880] gap-2">
-            <div className="flex items-center space-x-2">
-              <ShieldCheck className="w-4 h-4 text-[#0045A5]" />
-              <span>Full session persistence enabled with Go file-backed JSON database</span>
-            </div>
-            <div className="text-[11px]">
-              Currency: <strong>KSh (Kenyan Shillings)</strong> • M-Pesa Integrated
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {/* Landlord Card */}
+            {landlordUsers.map(user => (
+              <button
+                key={user.id}
+                type="button"
+                onClick={() => fillQuickPreset(user)}
+                className="p-3.5 rounded-2xl glass-card glass-card-hover text-left transition group border border-slate-200/80"
+              >
+                <div className="flex items-center space-x-2.5">
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.name}
+                    className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white"
+                  />
+                  <div className="overflow-hidden">
+                    <div className="flex items-center space-x-1.5">
+                      <p className="text-xs font-bold text-[#0F172A] truncate">{user.name}</p>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase bg-[#0045A5] text-white">
+                        Landlord
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#64748B] truncate">{user.email}</p>
+                    <p className="text-[10px] text-[#0045A5] font-mono">{user.phone}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+
+            {/* Resident Cards */}
+            {tenantUsers.slice(0, 5).map(user => (
+              <button
+                key={user.id}
+                type="button"
+                onClick={() => fillQuickPreset(user)}
+                className="p-3.5 rounded-2xl glass-card glass-card-hover text-left transition group border border-slate-200/80"
+              >
+                <div className="flex items-center space-x-2.5">
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.name}
+                    className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white"
+                  />
+                  <div className="overflow-hidden">
+                    <div className="flex items-center space-x-1.5">
+                      <p className="text-xs font-bold text-[#0F172A] truncate">{user.name}</p>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase bg-blue-50 text-[#0045A5] border border-blue-200">
+                        Apt {user.unitNumber}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#64748B] truncate">{user.email}</p>
+                    <p className="text-[10px] text-[#0045A5] font-mono">{user.phone}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Footer Info Strip */}
+      <div className="bg-slate-50 border-t border-slate-200 px-8 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#64748B] gap-2">
+        <div className="flex items-center space-x-2">
+          <ShieldCheck className="w-4 h-4 text-[#0045A5]" />
+          <span>Full session persistence enabled with Go file-backed JSON database</span>
+        </div>
+        <div className="text-[11px]">
+          Currency: <strong>KSh (Kenyan Shillings)</strong> • M-Pesa Integrated
         </div>
       </div>
+    </div>
   );
 
   if (isModal) {
@@ -565,7 +541,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#1E293B] flex flex-col justify-between selection:bg-[#0045A5] selection:text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col justify-between selection:bg-[#0045A5] selection:text-white relative overflow-hidden">
       <div className="ambient-glow-1" />
       <div className="ambient-glow-2" />
       <div className="ambient-glow-3" />
