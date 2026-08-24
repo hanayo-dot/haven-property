@@ -85,7 +85,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
               <Building2 className="w-4.5 h-4.5" />
             </div>
             <span className="font-bold text-xl tracking-tight text-[#0F172A]">
-              EstateFlow
+              PlotiSmarta
             </span>
           </div>
 
@@ -464,13 +464,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[#0B57D0]">
-              About EstateFlow
+              About PlotiSmarta
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
               Simplifying Property Management Across Kenya
             </h2>
             <p className="text-sm text-[#475569] leading-relaxed">
-              EstateFlow bridges the gap between estate managers, landlords, and residents. Built with high-performance Go micro-services and intuitive interfaces, our platform brings clarity, accountability, and effortless living to Nairobi properties.
+              PlotiSmarta bridges the gap between estate managers, landlords, and residents. Built with high-performance Go micro-services and intuitive interfaces, our platform brings clarity, accountability, and effortless living to Nairobi properties.
             </p>
             <div className="grid grid-cols-2 gap-4 pt-2">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
@@ -569,11 +569,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
                 <Building2 className="w-4 h-4" />
               </div>
               <span className="font-bold text-lg text-[#0F172A]">
-                EstateFlow
+                PlotiSmarta
               </span>
             </div>
             <p className="text-[#64748B] text-[11px] leading-relaxed max-w-xs">
-              © 2024 EstateFlow Management Systems. All rights reserved.
+              © 2024 PlotiSmarta Management Systems. All rights reserved.
             </p>
           </div>
 

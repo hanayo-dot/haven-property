@@ -13,6 +13,7 @@
     "server:test": "cd backend && go test -v ./...",
     "server:build": "mkdir -p bin && cd backend && go build -o ../bin/haven-server ./cmd/server/main.go",
     "build:all": "npm run build && npm run server:build",
+    "start": "./bin/haven-server",
     "test:all": "npm run lint && npm run server:test"
   },
   "dependencies": {

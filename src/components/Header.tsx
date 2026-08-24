@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-lg tracking-tight text-[#0F172A]">EstateFlow</span>
+                <span className="font-bold text-lg tracking-tight text-[#0F172A]">PlotiSmarta</span>
                 <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#CBD5E1] text-[#0045A5]">
                   Kenya
                 </span>

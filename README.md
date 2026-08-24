@@ -4,32 +4,32 @@
 
 ---
 
-## 🌟 Key Capabilities
+## Key Capabilities
 
-- 🔐 **Dual Portal Role-Based Authentication**:
+- **Dual Portal Role-Based Authentication**:
   - Sign in using **any Kenyan Phone Number** (`0712345678`, `+254 712 345 678`) or **Email address**.
   - **Resident Portal**: Scoped strictly to the resident's apartment lease, rent balance in KSh, M-Pesa STK push simulation, live repair ticket timeline, and estate caretaker WhatsApp contact.
   - **Landlord Operations Dashboard**: Full portfolio financial intelligence, Nairobi estate & unit management, resident directory, maintenance triage Kanban, and fundi assignments.
   - **User Registration**: Register new tenants with Nairobi property & unit assignment.
 
-- 🇰🇪 **Authentic Kenyan Localization & Financials**:
+- **Authentic Kenyan Localization & Financials**:
   - Currencies formatted in **KSh (Kenyan Shillings)**.
   - Pre-seeded with authentic Nairobi properties (*Kilimani Heights*, *Westlands Green Suites*, *Kileleshwa Terraces*).
   - Integrated **M-Pesa Paybill / Till Number** workflows with instant receipt generation.
   - 1-Click **WhatsApp Dispatch** pre-populates detailed Kenyan work orders for local fundis (Plumbers, Electricians, Carpenters).
 
-- 🤖 **Google Gemini 2.5 Flash Multimodal Vision**:
+- **Google Gemini 2.5 Flash Multimodal Vision**:
   - AI vision triage inspects tenant photos (leaks, wall cracks, electrical shorts).
   - Produces severity triage, estimated repair ranges in KSh, safety warnings, and recommended fundi trades.
 
-- ⚡ **High-Performance Go Backend (`backend/`)**:
+- **High-Performance Go Backend (`backend/`)**:
   - File-backed JSON persistence with thread-safe `sync.RWMutex` locks.
   - Auto-recalculates portfolio revenue, occupancy rates, and ticket metrics dynamically.
   - CSV export engine for maintenance tickets and resident registries.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 haven-property/
@@ -53,7 +53,7 @@ haven-property/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Prerequisites
 - **Node.js** (v18+)
@@ -79,7 +79,7 @@ npm run dev
 
 ---
 
-## 🔑 Test Credentials (`Password: haven2026`)
+## Test Credentials (`Password: haven2026`)
 
 | Role | Name | Email | Kenyan Phone | Assigned Unit |
 | :--- | :--- | :--- | :--- | :--- |
@@ -90,7 +90,7 @@ npm run dev
 
 ---
 
-## 📡 REST API Reference
+## REST API Reference
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |

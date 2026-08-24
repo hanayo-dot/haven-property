@@ -38,7 +38,7 @@ export const TenantLinkModal: React.FC = () => {
   const currentUnit = units.find(u => u.id === selectedUnit) || units[0];
   const currentProperty = properties.find(p => p.id === currentUnit?.propertyId) || properties[0];
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://estateflow.app';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://plotismarta.app';
   const shareableUrl = `${origin}/?portal=tenant-portal&property=${currentProperty?.id}&unit=${currentUnit?.id}`;
 
   const handleCopy = () => {
@@ -106,7 +106,7 @@ export const TenantLinkModal: React.FC = () => {
           
           <div className="space-y-1">
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0045A5]">
-              EstateFlow Resident Service Card
+              PlotiSmarta Resident Service Card
             </span>
             <h3 className="text-lg font-bold text-[#0F172A]">
               {currentProperty?.name}

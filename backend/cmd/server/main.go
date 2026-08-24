@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -57,6 +59,23 @@ func main() {
 	handler := handlers.NewHandler(store, aiService, exportService)
 	handler.RegisterRoutes(mux)
 
+	// Look for static frontend directory (SPA fallback)
+	staticDir := os.Getenv("STATIC_DIR")
+	if staticDir == "" {
+		candidates := []string{"./dist", "../dist", "dist"}
+		for _, c := range candidates {
+			if _, err := os.Stat(filepath.Join(c, "index.html")); err == nil {
+				staticDir = c
+				break
+			}
+		}
+	}
+
+	if staticDir != "" {
+		mux.Handle("/", spaHandler(staticDir))
+		log.Printf("✓ Serving static SPA frontend from: %s", staticDir)
+	}
+
 	// Apply Middlewares (Recovery -> Logging -> CORS -> Mux)
 	var finalHandler http.Handler = mux
 	finalHandler = middleware.CORS(finalHandler)
@@ -97,4 +116,34 @@ func main() {
 	}
 
 	log.Println("Server exited cleanly.")
+}
+
+func spaHandler(staticDir string) http.Handler {
+	fs := http.Dir(staticDir)
+	fileServer := http.FileServer(fs)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Never intercept /api/ routes
+		if strings.HasPrefix(r.URL.Path, "/api/") || r.URL.Path == "/api" {
+			http.NotFound(w, r)
+			return
+		}
+
+		path := filepath.Clean(r.URL.Path)
+		f, err := fs.Open(path)
+		if err != nil {
+			// Fallback to index.html for SPA client-side routes
+			http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
+			return
+		}
+		defer f.Close()
+
+		stat, err := f.Stat()
+		if err != nil || stat.IsDir() {
+			http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
+			return
+		}
+
+		fileServer.ServeHTTP(w, r)
+	})
 }

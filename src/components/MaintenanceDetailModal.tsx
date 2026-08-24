@@ -106,7 +106,7 @@ export const MaintenanceDetailModal: React.FC = () => {
   };
 
   const generateDispatchBriefing = () => {
-    return `*ESTATEFLOW DISPATCH ORDER*\n` +
+    return `*PLOTISMARTA DISPATCH ORDER*\n` +
       `Ticket: ${request.ticketNumber}\n` +
       `Property: ${request.propertyName}\n` +
       `Unit: ${request.unitNumber}\n` +
@@ -368,10 +368,10 @@ export const MaintenanceDetailModal: React.FC = () => {
                       onChange={e => handlePriorityChange(e.target.value as IssuePriority)}
                       className="w-full text-xs font-semibold rounded-xl border border-slate-200 bg-white text-[#0F172A] px-2.5 py-2 focus:outline-hidden focus:border-[#0045A5]"
                     >
-                      <option value="Emergency">🚨 Emergency</option>
-                      <option value="High">⚠️ High</option>
-                      <option value="Medium">⚡ Medium</option>
-                      <option value="Low">🌱 Routine</option>
+                      <option value="Emergency">Emergency</option>
+                      <option value="High">High</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Low">Routine</option>
                     </select>
                   </div>
                 </div>

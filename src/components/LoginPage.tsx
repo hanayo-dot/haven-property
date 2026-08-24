@@ -98,7 +98,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       const selectedProp = properties.find(p => p.id === regPropertyId);
       await register({
         name: regName.trim(),
-        email: regEmail.trim() || `${regName.toLowerCase().replace(/\s+/g, '.')}@estateflow.co.ke`,
+        email: regEmail.trim() || `${regName.toLowerCase().replace(/\s+/g, '.')}@plotismarta.co.ke`,
         phone: regPhone.trim() || '+254 700 000 000',
         role: regRole,
         propertyId: regRole === 'tenant' ? regPropertyId : undefined,
@@ -552,7 +552,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <Building2 className="w-5 h-5" />
           </div>
           <div>
-            <span className="font-bold text-xl tracking-tight text-[#0F172A]">EstateFlow</span>
+            <span className="font-bold text-xl tracking-tight text-[#0F172A]">PlotiSmarta</span>
             <span className="text-[10px] ml-2 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/70 border border-[#CBD5E1] text-[#0045A5]">
               Kenya OS
             </span>
@@ -569,7 +569,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       </main>
 
       <footer className="py-6 text-center text-xs text-[#64748B]">
-        &copy; 2024 EstateFlow Management Systems. All rights reserved.
+        &copy; 2024 PlotiSmarta Management Systems. All rights reserved.
       </footer>
     </div>
   );

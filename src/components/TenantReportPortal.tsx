@@ -16,7 +16,14 @@ import {
   Loader2, 
   ArrowRight,
   Info,
-  Zap
+  Zap,
+  Droplets,
+  Plug,
+  Sun,
+  AppWindow,
+  Lock,
+  Bug,
+  AlertCircle
 } from 'lucide-react';
 import { useProperty } from '../context/PropertyContext';
 import { DamagePhoto, IssueCategory, IssuePriority, MaintenanceRequest } from '../types';
@@ -190,15 +197,57 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
     }
   };
 
-  const categories: { name: IssueCategory; icon: string }[] = [
-    { name: 'Plumbing', icon: '🚰' },
-    { name: 'Electrical', icon: '⚡' },
-    { name: 'Appliance', icon: '🔌' },
-    { name: 'HVAC / Climate', icon: '☀️' },
-    { name: 'Structural & Windows', icon: '🪟' },
-    { name: 'Locks & Security', icon: '🔒' },
-    { name: 'Pest Control', icon: '🐜' },
-    { name: 'Other', icon: '🛠️' },
+  const categories: { name: IssueCategory; icon: React.FC<{ className?: string }> }[] = [
+    { name: 'Plumbing', icon: Droplets },
+    { name: 'Electrical', icon: Zap },
+    { name: 'Appliance', icon: Plug },
+    { name: 'HVAC / Climate', icon: Sun },
+    { name: 'Structural & Windows', icon: AppWindow },
+    { name: 'Locks & Security', icon: Lock },
+    { name: 'Pest Control', icon: Bug },
+    { name: 'Other', icon: Wrench },
+  ];
+
+  const priorityOptions: {
+    level: IssuePriority;
+    label: string;
+    sub: string;
+    icon: React.FC<{ className?: string }>;
+    color: string;
+    activeBorder: string;
+  }[] = [
+    { 
+      level: 'Emergency', 
+      label: 'Emergency', 
+      sub: 'Active flooding / spark', 
+      icon: AlertTriangle,
+      color: 'text-rose-600',
+      activeBorder: 'bg-rose-50 border-rose-500 ring-1 ring-rose-500'
+    },
+    { 
+      level: 'High', 
+      label: 'High', 
+      sub: 'Broken latch / shower', 
+      icon: AlertCircle,
+      color: 'text-amber-600',
+      activeBorder: 'bg-amber-50 border-amber-500 ring-1 ring-amber-500'
+    },
+    { 
+      level: 'Medium', 
+      label: 'Medium', 
+      sub: 'Dripping tap / slow drain', 
+      icon: Zap,
+      color: 'text-[#0045A5]',
+      activeBorder: 'bg-blue-50 border-[#0045A5] ring-1 ring-[#0045A5]'
+    },
+    { 
+      level: 'Low', 
+      label: 'Routine', 
+      sub: 'Cosmetic touch-up', 
+      icon: CheckCircle2,
+      color: 'text-emerald-600',
+      activeBorder: 'bg-emerald-50 border-emerald-500 ring-1 ring-emerald-500'
+    }
   ];
 
   if (submittedTicket) {
@@ -407,45 +456,51 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
 
           {/* Category Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-            {categories.map(cat => (
-              <button
-                key={cat.name}
-                type="button"
-                onClick={() => setCategory(cat.name)}
-                className={`flex items-center space-x-1.5 p-2 rounded-xl text-xs font-semibold transition ${
-                  category === cat.name
-                    ? 'bg-[#0045A5] text-white shadow-xs'
-                    : 'bg-slate-50 text-[#0F172A] hover:bg-slate-100'
-                }`}
-              >
-                <span>{cat.icon}</span>
-                <span className="truncate">{cat.name}</span>
-              </button>
-            ))}
+            {categories.map(cat => {
+              const CategoryIcon = cat.icon;
+              const isSelected = category === cat.name;
+              return (
+                <button
+                  key={cat.name}
+                  type="button"
+                  onClick={() => setCategory(cat.name)}
+                  className={`flex items-center space-x-2 p-2.5 rounded-xl text-xs font-semibold transition ${
+                    isSelected
+                      ? 'bg-[#0045A5] text-white shadow-xs'
+                      : 'bg-slate-50 text-[#0F172A] hover:bg-slate-100'
+                  }`}
+                >
+                  <CategoryIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-white' : 'text-[#0045A5]'}`} />
+                  <span className="truncate">{cat.name}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Urgency */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-            {[
-              { level: 'Emergency', label: '🚨 Emergency', sub: 'Active flooding / spark' },
-              { level: 'High', label: '⚠️ High', sub: 'Broken latch / shower' },
-              { level: 'Medium', label: '⚡ Medium', sub: 'Dripping tap / slow drain' },
-              { level: 'Low', label: '🌱 Routine', sub: 'Cosmetic touch-up' }
-            ].map(p => (
-              <button
-                key={p.level}
-                type="button"
-                onClick={() => setPriority(p.level as IssuePriority)}
-                className={`p-2.5 rounded-xl border text-left transition ${
-                  priority === p.level
-                    ? 'bg-blue-50 border-[#0045A5] ring-1 ring-[#0045A5]'
-                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                <div className="text-xs font-semibold text-[#0F172A]">{p.label}</div>
-                <div className="text-[10px] text-[#64748B] leading-tight mt-0.5">{p.sub}</div>
-              </button>
-            ))}
+            {priorityOptions.map(p => {
+              const PriorityIcon = p.icon;
+              const isSelected = priority === p.level;
+              return (
+                <button
+                  key={p.level}
+                  type="button"
+                  onClick={() => setPriority(p.level)}
+                  className={`p-2.5 rounded-xl border text-left transition ${
+                    isSelected
+                      ? p.activeBorder
+                      : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center space-x-1.5">
+                    <PriorityIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? '' : p.color}`} />
+                    <span className="text-xs font-semibold text-[#0F172A]">{p.label}</span>
+                  </div>
+                  <div className="text-[10px] text-[#64748B] leading-tight mt-1">{p.sub}</div>
+                </button>
+              );
+            })}
           </div>
 
           {/* Title & Description */}

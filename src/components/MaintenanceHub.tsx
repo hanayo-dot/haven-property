@@ -22,7 +22,9 @@ import {
   DollarSign,
   Download,
   SlidersHorizontal,
-  X
+  X,
+  Inbox,
+  Zap
 } from 'lucide-react';
 import { useProperty } from '../context/PropertyContext';
 import { IssueCategory, IssuePriority, IssueStatus, MaintenanceRequest } from '../types';
@@ -75,12 +77,12 @@ export const MaintenanceHub: React.FC = () => {
     Low: 'bg-slate-100 text-[#64748B] border border-slate-200',
   };
 
-  const statusColumns: { id: IssueStatus; label: string; icon: string; accentColor: string }[] = [
-    { id: 'New', label: 'New', icon: '📥', accentColor: 'bg-slate-500' },
-    { id: 'Under Review', label: 'Under Review', icon: '🔍', accentColor: 'bg-amber-500' },
-    { id: 'Scheduled', label: 'Scheduled', icon: '🗓️', accentColor: 'bg-blue-600' },
-    { id: 'In Progress', label: 'In Progress', icon: '⚡', accentColor: 'bg-sky-500' },
-    { id: 'Resolved', label: 'Resolved', icon: '✅', accentColor: 'bg-[#0045A5]' },
+  const statusColumns: { id: IssueStatus; label: string; icon: React.FC<{ className?: string }>; accentColor: string }[] = [
+    { id: 'New', label: 'New', icon: Inbox, accentColor: 'bg-slate-500' },
+    { id: 'Under Review', label: 'Under Review', icon: Search, accentColor: 'bg-amber-500' },
+    { id: 'Scheduled', label: 'Scheduled', icon: Calendar, accentColor: 'bg-blue-600' },
+    { id: 'In Progress', label: 'In Progress', icon: Zap, accentColor: 'bg-sky-500' },
+    { id: 'Resolved', label: 'Resolved', icon: CheckCircle2, accentColor: 'bg-[#0045A5]' },
   ];
 
   const hasActiveFilters = selectedCategory !== 'all' || selectedPriority !== 'all' || selectedProperty !== 'all' || searchQuery.trim() !== '';
@@ -236,10 +238,10 @@ export const MaintenanceHub: React.FC = () => {
               className="text-xs py-2 px-3 rounded-xl glass-input text-[#0F172A] focus:outline-hidden"
             >
               <option value="all">All Priorities</option>
-              <option value="Emergency">🚨 Emergency</option>
-              <option value="High">⚠️ High</option>
-              <option value="Medium">⚡ Medium</option>
-              <option value="Low">🌱 Routine</option>
+              <option value="Emergency">Emergency</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Routine</option>
             </select>
 
             {hasActiveFilters && (
@@ -284,6 +286,7 @@ export const MaintenanceHub: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start">
           {statusColumns.map(col => {
             const columnRequests = filteredRequests.filter(r => r.status === col.id);
+            const ColumnIcon = col.icon;
             return (
               <div 
                 key={col.id} 
@@ -292,7 +295,7 @@ export const MaintenanceHub: React.FC = () => {
                 {/* Column Header */}
                 <div className="flex items-center justify-between mb-3 px-1">
                   <div className="flex items-center space-x-1.5">
-                    <span className="text-xs">{col.icon}</span>
+                    <ColumnIcon className="w-3.5 h-3.5 text-[#0045A5]" />
                     <h3 className="font-semibold text-xs text-[#0F172A]">
                       {col.label}
                     </h3>

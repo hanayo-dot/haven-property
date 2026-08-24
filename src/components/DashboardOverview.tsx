@@ -62,7 +62,7 @@ export const DashboardOverview: React.FC = () => {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight">
-              EstateFlow Operations Dashboard
+              PlotiSmarta Operations Dashboard
             </h1>
             <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-light">
               Managing <strong className="text-white font-semibold">{stats.totalProperties} properties</strong> ({stats.totalUnits} units across Kilimani, Westlands, and Kileleshwa) with live M-Pesa tracking, Gemini AI photo triage, and fundi dispatching.
@@ -243,8 +243,9 @@ export const DashboardOverview: React.FC = () => {
                     >
                       <img src={req.photos[0].url} alt="" className="w-full h-full object-cover group-hover/img:scale-110 transition duration-300" />
                       <div className="absolute inset-0 bg-black/20 group-hover/img:bg-transparent flex items-end p-1">
-                        <span className="text-[8px] font-bold text-white bg-black/70 px-1 rounded">
-                          {req.photos.length}📷
+                        <span className="text-[8px] font-bold text-white bg-black/70 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                          <Camera className="w-2.5 h-2.5" />
+                          <span>{req.photos.length}</span>
                         </span>
                       </div>
                     </div>

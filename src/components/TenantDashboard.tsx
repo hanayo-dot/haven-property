@@ -478,7 +478,7 @@ export const TenantDashboard: React.FC = () => {
                 <span>M-Pesa Payment Confirmed!</span>
               </div>
               <p className="text-emerald-700">
-                Receipt <strong className="font-mono text-[#0F172A]">{mpesaSuccess}</strong> Confirmed. KSh {rentAmount.toLocaleString()} paid to EstateFlow Properties ({property.name} Unit {currentUser?.unitNumber || '4B'}).
+                Receipt <strong className="font-mono text-[#0F172A]">{mpesaSuccess}</strong> Confirmed. KSh {rentAmount.toLocaleString()} paid to PlotiSmarta Properties ({property.name} Unit {currentUser?.unitNumber || '4B'}).
               </p>
             </div>
           )}

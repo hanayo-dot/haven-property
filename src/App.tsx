@@ -40,7 +40,7 @@ const MainAppContent: React.FC = () => {
     }
   }, [setViewMode]);
 
-  // If not logged in, render the EstateFlow Landing Page with modal login
+  // If not logged in, render the PlotiSmarta Landing Page with modal login
   if (!currentUser) {
     return (
       <>
@@ -90,7 +90,7 @@ const MainAppContent: React.FC = () => {
       <footer className="mt-auto border-t border-[#E2E8F0] bg-white/80 backdrop-blur-md py-6 text-center text-xs text-[#64748B]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-[#0F172A]">EstateFlow Kenya</span>
+            <span className="font-bold text-[#0F172A]">PlotiSmarta Kenya</span>
             <span>•</span>
             <span>Modern Property Operations & Resident Portal</span>
           </div>

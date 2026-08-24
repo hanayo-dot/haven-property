@@ -65,7 +65,7 @@ export const NewPropertyModal: React.FC = () => {
       managerContact: {
         name: managerName,
         phone: managerPhone,
-        email: 'wanjiku@estateflow.co.ke'
+        email: 'wanjiku@plotismarta.co.ke'
       }
     });
 
