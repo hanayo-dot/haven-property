@@ -12,6 +12,13 @@ import {
 
 const API_BASE = '/api';
 
+async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  const headers = new Headers(init.headers);
+  const token = localStorage.getItem('haven_kenya_token_v1');
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  return fetch(input, { ...init, headers });
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const errorText = await res.text().catch(() => 'Unknown error');
@@ -24,7 +31,7 @@ export const api = {
   // Health
   async checkHealth(): Promise<boolean> {
     try {
-      const res = await fetch(`${API_BASE}/health`, { method: 'GET' });
+      const res = await apiFetch(`${API_BASE}/health`, { method: 'GET' });
       return res.ok;
     } catch {
       return false;
@@ -33,13 +40,13 @@ export const api = {
 
   // Stats
   async getStats(): Promise<any> {
-    const res = await fetch(`${API_BASE}/stats`);
+    const res = await apiFetch(`${API_BASE}/stats`);
     return handleResponse(res);
   },
 
   // Reset
   async resetToDemo(): Promise<void> {
-    const res = await fetch(`${API_BASE}/reset`, { method: 'POST' });
+    const res = await apiFetch(`${API_BASE}/reset`, { method: 'POST' });
     return handleResponse(res);
   },
 
@@ -49,30 +56,34 @@ export const api = {
 
   // Auth & Users
   async getUsers(): Promise<User[]> {
-    const res = await fetch(`${API_BASE}/auth/users`);
+    const res = await apiFetch(`${API_BASE}/auth/users`);
     return handleResponse<User[]>(res);
   },
 
   async login(identifier: string, password?: string, role?: string, name?: string): Promise<{ user: User; token: string }> {
-    const res = await fetch(`${API_BASE}/auth/login`, {
+    const res = await apiFetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier, password, role, name })
     });
-    return handleResponse<{ user: User; token: string }>(res);
+    const response = await handleResponse<{ user: User; token: string }>(res);
+    localStorage.setItem('haven_kenya_token_v1', response.token);
+    return response;
   },
 
   async register(data: Partial<User> & { password?: string }): Promise<{ user: User; token: string }> {
-    const res = await fetch(`${API_BASE}/auth/register`, {
+    const res = await apiFetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    return handleResponse<{ user: User; token: string }>(res);
+    const response = await handleResponse<{ user: User; token: string }>(res);
+    localStorage.setItem('haven_kenya_token_v1', response.token);
+    return response;
   },
 
   async getCurrentUser(identifier: string): Promise<User> {
-    const res = await fetch(`${API_BASE}/auth/me?identifier=${encodeURIComponent(identifier)}`);
+    const res = await apiFetch(`${API_BASE}/auth/me?identifier=${encodeURIComponent(identifier)}`);
     return handleResponse<User>(res);
   },
 
@@ -83,7 +94,7 @@ export const api = {
     if (params.unitNumber) query.set('unitNumber', params.unitNumber);
     if (params.unitId) query.set('unitId', params.unitId);
 
-    const res = await fetch(`${API_BASE}/tenant/tickets?${query.toString()}`);
+    const res = await apiFetch(`${API_BASE}/tenant/tickets?${query.toString()}`);
     return handleResponse<MaintenanceRequest[]>(res);
   },
 
@@ -93,7 +104,7 @@ export const api = {
     amount: number;
     account: string;
   }): Promise<{ success: boolean; receiptNumber: string; message: string; transactionTime: string }> {
-    const res = await fetch(`${API_BASE}/tenant/mpesa/simulate`, {
+    const res = await apiFetch(`${API_BASE}/tenant/mpesa/simulate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
@@ -103,12 +114,12 @@ export const api = {
 
   // Properties
   async getProperties(): Promise<Property[]> {
-    const res = await fetch(`${API_BASE}/properties`);
+    const res = await apiFetch(`${API_BASE}/properties`);
     return handleResponse<Property[]>(res);
   },
 
   async createProperty(property: Omit<Property, 'id' | 'occupiedUnits' | 'monthlyRevenue'>): Promise<Property> {
-    const res = await fetch(`${API_BASE}/properties`, {
+    const res = await apiFetch(`${API_BASE}/properties`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(property)
@@ -117,7 +128,7 @@ export const api = {
   },
 
   async updateProperty(id: string, updates: Partial<Property>): Promise<Property> {
-    const res = await fetch(`${API_BASE}/properties/${id}`, {
+    const res = await apiFetch(`${API_BASE}/properties/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -126,19 +137,19 @@ export const api = {
   },
 
   async deleteProperty(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/properties/${id}`, { method: 'DELETE' });
+    const res = await apiFetch(`${API_BASE}/properties/${id}`, { method: 'DELETE' });
     return handleResponse(res);
   },
 
   // Units
   async getUnits(propertyId?: string): Promise<Unit[]> {
     const url = propertyId ? `${API_BASE}/units?propertyId=${propertyId}` : `${API_BASE}/units`;
-    const res = await fetch(url);
+    const res = await apiFetch(url);
     return handleResponse<Unit[]>(res);
   },
 
   async createUnit(unit: Omit<Unit, 'id'>): Promise<Unit> {
-    const res = await fetch(`${API_BASE}/units`, {
+    const res = await apiFetch(`${API_BASE}/units`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(unit)
@@ -147,7 +158,7 @@ export const api = {
   },
 
   async updateUnit(id: string, updates: Partial<Unit>): Promise<Unit> {
-    const res = await fetch(`${API_BASE}/units/${id}`, {
+    const res = await apiFetch(`${API_BASE}/units/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -156,18 +167,18 @@ export const api = {
   },
 
   async deleteUnit(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/units/${id}`, { method: 'DELETE' });
+    const res = await apiFetch(`${API_BASE}/units/${id}`, { method: 'DELETE' });
     return handleResponse(res);
   },
 
   // Tenants
   async getTenants(): Promise<Tenant[]> {
-    const res = await fetch(`${API_BASE}/tenants`);
+    const res = await apiFetch(`${API_BASE}/tenants`);
     return handleResponse<Tenant[]>(res);
   },
 
   async createTenant(tenant: Omit<Tenant, 'id'>): Promise<Tenant> {
-    const res = await fetch(`${API_BASE}/tenants`, {
+    const res = await apiFetch(`${API_BASE}/tenants`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(tenant)
@@ -176,7 +187,7 @@ export const api = {
   },
 
   async updateTenant(id: string, updates: Partial<Tenant>): Promise<Tenant> {
-    const res = await fetch(`${API_BASE}/tenants/${id}`, {
+    const res = await apiFetch(`${API_BASE}/tenants/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -185,18 +196,18 @@ export const api = {
   },
 
   async deleteTenant(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/tenants/${id}`, { method: 'DELETE' });
+    const res = await apiFetch(`${API_BASE}/tenants/${id}`, { method: 'DELETE' });
     return handleResponse(res);
   },
 
   // Maintenance Requests
   async getMaintenanceRequests(): Promise<MaintenanceRequest[]> {
-    const res = await fetch(`${API_BASE}/maintenance`);
+    const res = await apiFetch(`${API_BASE}/maintenance`);
     return handleResponse<MaintenanceRequest[]>(res);
   },
 
   async createMaintenanceRequest(request: Partial<MaintenanceRequest>): Promise<MaintenanceRequest> {
-    const res = await fetch(`${API_BASE}/maintenance`, {
+    const res = await apiFetch(`${API_BASE}/maintenance`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -205,7 +216,7 @@ export const api = {
   },
 
   async updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>): Promise<MaintenanceRequest> {
-    const res = await fetch(`${API_BASE}/maintenance/${id}`, {
+    const res = await apiFetch(`${API_BASE}/maintenance/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -214,12 +225,12 @@ export const api = {
   },
 
   async deleteMaintenanceRequest(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/maintenance/${id}`, { method: 'DELETE' });
+    const res = await apiFetch(`${API_BASE}/maintenance/${id}`, { method: 'DELETE' });
     return handleResponse(res);
   },
 
   async updateMaintenanceStatus(id: string, status: IssueStatus, comment?: string): Promise<MaintenanceRequest> {
-    const res = await fetch(`${API_BASE}/maintenance/${id}/status`, {
+    const res = await apiFetch(`${API_BASE}/maintenance/${id}/status`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status, comment })
@@ -232,7 +243,7 @@ export const api = {
   },
 
   async updateMaintenancePriority(id: string, priority: IssuePriority): Promise<MaintenanceRequest> {
-    const res = await fetch(`${API_BASE}/maintenance/${id}/priority`, {
+    const res = await apiFetch(`${API_BASE}/maintenance/${id}/priority`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ priority })
@@ -249,7 +260,7 @@ export const api = {
     contractor: { name: string; company: string; phone: string; whatsApp?: string; scheduledDate?: string; estimatedArrival?: string },
     estimatedCost?: number
   ): Promise<MaintenanceRequest> {
-    const res = await fetch(`${API_BASE}/maintenance/${id}/contractor`, {
+    const res = await apiFetch(`${API_BASE}/maintenance/${id}/contractor`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...contractor, estimatedCost })
@@ -258,7 +269,7 @@ export const api = {
   },
 
   async addTimelineEntry(id: string, entry: Omit<TimelineEntry, 'id' | 'timestamp'>): Promise<TimelineEntry> {
-    const res = await fetch(`${API_BASE}/maintenance/${id}/timeline`, {
+    const res = await apiFetch(`${API_BASE}/maintenance/${id}/timeline`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entry)
@@ -268,7 +279,7 @@ export const api = {
 
   // AI Damage Diagnostics
   async diagnoseAI(title: string, description: string, category: string, photos: string[]): Promise<AIDiagnosis> {
-    const res = await fetch(`${API_BASE}/ai/diagnose`, {
+    const res = await apiFetch(`${API_BASE}/ai/diagnose`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, description, category, photos: photos.slice(0, 3) })

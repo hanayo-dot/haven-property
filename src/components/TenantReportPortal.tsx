@@ -40,7 +40,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
     properties, 
     units, 
     currentUser, 
-    createMaintenanceRequest, 
+    addMaintenanceRequest,
     setSelectedRequestId,
     setIsReportModalOpen,
     setViewMode,
@@ -172,7 +172,7 @@ export const TenantReportPortal: React.FC<TenantReportPortalProps> = ({ isModal 
       const prop = properties.find(p => p.id === selectedPropertyId);
       const unit = units.find(u => u.id === selectedUnitId);
 
-      const newTicket = await createMaintenanceRequest({
+      const newTicket = await addMaintenanceRequest({
         propertyId: selectedPropertyId,
         propertyName: prop?.name || 'Property',
         unitId: selectedUnitId,

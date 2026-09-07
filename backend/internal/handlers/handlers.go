@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -138,7 +139,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := fmt.Sprintf("haven_token_%s_%d", user.Role, time.Now().Unix())
+	token := middleware.IssueToken(user.ID, string(user.Role))
 	middleware.JSON(w, models.LoginResponse{
 		User:  *user,
 		Token: token,
@@ -165,7 +166,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := fmt.Sprintf("haven_token_%s_%d", user.Role, time.Now().Unix())
+	token := middleware.IssueToken(user.ID, string(user.Role))
 	middleware.JSON(w, models.LoginResponse{
 		User:  *user,
 		Token: token,
@@ -199,6 +200,16 @@ func (h *Handler) GetTenantTickets(w http.ResponseWriter, r *http.Request) {
 	tenantName := r.URL.Query().Get("tenantName")
 	unitNumber := r.URL.Query().Get("unitNumber")
 	unitID := r.URL.Query().Get("unitId")
+	if userID, role, ok := middleware.AuthenticatedUser(r.Context()); ok && role == string(models.RoleTenant) {
+		user, err := h.store.GetUserByID(userID)
+		if err != nil {
+			middleware.JSONError(w, "User not found", http.StatusUnauthorized)
+			return
+		}
+		tenantName = user.Name
+		unitNumber = user.UnitNumber
+		unitID = user.UnitID
+	}
 
 	tickets := h.store.GetTenantRequests(tenantName, unitNumber, unitID)
 	middleware.JSON(w, tickets, http.StatusOK)
@@ -210,11 +221,31 @@ func (h *Handler) SimulateMpesaPayment(w http.ResponseWriter, r *http.Request) {
 		middleware.JSONError(w, "Invalid payment payload", http.StatusBadRequest)
 		return
 	}
+	if req.Amount <= 0 || math.IsNaN(req.Amount) || math.IsInf(req.Amount, 0) {
+		middleware.JSONError(w, "Payment amount must be a positive number", http.StatusBadRequest)
+		return
+	}
 
 	receipt := fmt.Sprintf("QK%s%04d", strings.ToUpper(fmt.Sprintf("%x", time.Now().UnixNano()%0xFFF)), time.Now().Nanosecond()%9000+1000)
 	unitNum := req.Account
 	if strings.HasPrefix(unitNum, "HAVEN-") {
 		unitNum = strings.TrimPrefix(unitNum, "HAVEN-")
+	}
+	if userID, role, ok := middleware.AuthenticatedUser(r.Context()); ok {
+		if role != string(models.RoleTenant) {
+			middleware.JSONError(w, "Only tenants can make tenant payments", http.StatusForbidden)
+			return
+		}
+		user, err := h.store.GetUserByID(userID)
+		if err != nil || (strings.EqualFold(req.Account, user.MpesaAccount) == false && !strings.EqualFold(unitNum, user.UnitNumber)) {
+			middleware.JSONError(w, "Payment account does not belong to the authenticated tenant", http.StatusForbidden)
+			return
+		}
+		if user.RentAmount != nil && req.Amount < *user.RentAmount {
+			middleware.JSONError(w, "Payment amount is below the current rent balance", http.StatusBadRequest)
+			return
+		}
+		unitNum = user.UnitNumber
 	}
 
 	_ = h.store.RecordMpesaPayment(unitNum, req.Amount, receipt)
@@ -453,6 +484,20 @@ func (h *Handler) CreateMaintenanceRequest(w http.ResponseWriter, r *http.Reques
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		middleware.JSONError(w, "Invalid request payload", http.StatusBadRequest)
 		return
+	}
+	if userID, role, ok := middleware.AuthenticatedUser(r.Context()); ok && role == string(models.RoleTenant) {
+		user, err := h.store.GetUserByID(userID)
+		if err != nil || user.PropertyID == "" || user.UnitID == "" {
+			middleware.JSONError(w, "Tenant lease is not configured", http.StatusForbidden)
+			return
+		}
+		req.PropertyID = user.PropertyID
+		req.PropertyName = user.PropertyName
+		req.UnitID = user.UnitID
+		req.UnitNumber = user.UnitNumber
+		req.TenantName = user.Name
+		req.TenantPhone = user.Phone
+		req.TenantEmail = user.Email
 	}
 	if req.Title == "" || req.PropertyID == "" {
 		middleware.JSONError(w, "Title and property are required", http.StatusBadRequest)

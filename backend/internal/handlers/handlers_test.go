@@ -102,8 +102,9 @@ func TestAuthAndLogin(t *testing.T) {
 
 	// 2. Login Landlord
 	loginBody, _ := json.Marshal(models.LoginRequest{
-		Email: "wanjiku@havenmgmt.co.ke",
-		Role:  "landlord",
+		Email:    "wanjiku@havenmgmt.co.ke",
+		Role:     "landlord",
+		Password: "haven2026",
 	})
 	req = httptest.NewRequest("POST", "/api/auth/login", bytes.NewBuffer(loginBody))
 	w = httptest.NewRecorder()

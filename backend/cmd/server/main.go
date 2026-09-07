@@ -39,7 +39,7 @@ func main() {
 
 	log.Printf("=================================================")
 	log.Printf(" Haven Property & Maintenance Management OS")
-	log.Printf(" Backend Server (Go 1.26)")
+	log.Printf(" Backend Server (Go 1.25+)")
 	log.Printf("=================================================")
 
 	// Initialize Storage
@@ -79,6 +79,8 @@ func main() {
 	// Apply Middlewares (Recovery -> Logging -> CORS -> Mux)
 	var finalHandler http.Handler = mux
 	finalHandler = middleware.CORS(finalHandler)
+	finalHandler = middleware.Auth(finalHandler)
+	finalHandler = middleware.Authorize(finalHandler)
 	finalHandler = middleware.Logging(finalHandler)
 	finalHandler = middleware.Recovery(finalHandler)
 

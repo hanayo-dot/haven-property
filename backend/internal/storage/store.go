@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"haven-property/backend/internal/models"
 )
 
@@ -85,8 +87,27 @@ func (s *Store) seedDefaults() {
 		s.maintenanceRequests[r.ID] = r
 	}
 	for _, u := range GetInitialUsers() {
+		u.Password = hashPassword(u.Password)
 		s.users[u.ID] = u
 	}
+}
+
+func hashPassword(password string) string {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		panic(fmt.Sprintf("failed to hash password: %v", err))
+	}
+	return string(hashed)
+}
+
+func passwordMatches(storedPassword, password string) bool {
+	if password == "" {
+		return false
+	}
+	if strings.HasPrefix(storedPassword, "$2a$") || strings.HasPrefix(storedPassword, "$2b$") || strings.HasPrefix(storedPassword, "$2y$") {
+		return bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(password)) == nil
+	}
+	return storedPassword == password
 }
 
 func (s *Store) loadFromFile() error {
@@ -171,8 +192,15 @@ func (s *Store) saveToFileLocked() {
 	}
 
 	bytes, err := json.MarshalIndent(snapshot, "", "  ")
-	if err == nil {
-		_ = os.WriteFile(s.filePath, bytes, 0644)
+	if err != nil {
+		return
+	}
+	tmpPath := s.filePath + ".tmp"
+	if err := os.WriteFile(tmpPath, bytes, 0600); err != nil {
+		return
+	}
+	if err := os.Rename(tmpPath, s.filePath); err != nil {
+		_ = os.Remove(tmpPath)
 	}
 }
 
@@ -283,9 +311,13 @@ func (s *Store) Authenticate(identifier string, password string, roleHint string
 		matchedPhone := cleanPhone != "" && normalizePhone(u.Phone) == cleanPhone
 
 		if matchedEmail || matchedPhone {
-			// Password check (if password provided, compare; default accepted if matches demo)
-			if password != "" && u.Password != "" && u.Password != password && password != "haven2026" {
+			if !passwordMatches(u.Password, password) {
 				return nil, errors.New("invalid credentials")
+			}
+			if !strings.HasPrefix(u.Password, "$2a$") && !strings.HasPrefix(u.Password, "$2b$") && !strings.HasPrefix(u.Password, "$2y$") {
+				u.Password = hashPassword(password)
+				s.users[u.ID] = u
+				s.saveToFileLocked()
 			}
 			return &u, nil
 		}
@@ -318,9 +350,8 @@ func (s *Store) Authenticate(identifier string, password string, roleHint string
 		userEmail = fmt.Sprintf("tenant.%s@havenmgmt.co.ke", cleanPhone)
 	}
 
-	userPass := password
-	if userPass == "" {
-		userPass = "haven2026"
+	if password == "" {
+		return nil, errors.New("password is required")
 	}
 
 	newUser := models.User{
@@ -328,7 +359,7 @@ func (s *Store) Authenticate(identifier string, password string, roleHint string
 		Name:      userName,
 		Email:     userEmail,
 		Phone:     userPhone,
-		Password:  userPass,
+		Password:  hashPassword(password),
 		Role:      userRole,
 		AvatarURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
 		CreatedAt: time.Now().UTC().Format(time.RFC3339),

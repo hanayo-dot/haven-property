@@ -14,3 +14,7 @@ services:
         value: /app/dist
       - key: GEMINI_API_KEY
         sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://plotismarta.onrender.com

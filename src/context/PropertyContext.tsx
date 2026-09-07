@@ -321,6 +321,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setViewMode('landlord');
     try {
       localStorage.removeItem(STORAGE_KEYS.USER);
+      localStorage.removeItem('haven_kenya_token_v1');
       sessionStorage.clear();
       // Clean URL params if any
       if (window.location.search) {
@@ -339,6 +340,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const healthy = await api.checkHealth();
         if (healthy && isMounted) {
           setIsBackendOnline(true);
+          if (!localStorage.getItem('haven_kenya_token_v1')) return;
           const [backendProps, backendUnits, backendTenants, backendRequests] = await Promise.all([
             api.getProperties().catch(() => null),
             api.getUnits().catch(() => null),
@@ -356,7 +358,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
     initBackend();
     return () => { isMounted = false; };
-  }, []);
+  }, [currentUser]);
 
   // Save to localStorage
   useEffect(() => {
@@ -623,12 +625,18 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const updateMaintenanceRequest = useCallback((id: string, updates: Partial<MaintenanceRequest>) => {
     setMaintenanceRequests(prev => prev.map(r => r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString() } : r));
-  }, []);
+    if (isBackendOnline) {
+      api.updateMaintenanceRequest(id, updates).catch(err => console.warn('Backend sync maintenance update failed:', err));
+    }
+  }, [isBackendOnline]);
 
   const deleteMaintenanceRequest = useCallback((id: string) => {
     setMaintenanceRequests(prev => prev.filter(r => r.id !== id));
     if (selectedRequestId === id) setSelectedRequestId(null);
-  }, [selectedRequestId]);
+    if (isBackendOnline) {
+      api.deleteMaintenanceRequest(id).catch(err => console.warn('Backend sync maintenance delete failed:', err));
+    }
+  }, [isBackendOnline, selectedRequestId]);
 
   // Property CRUD
   const addProperty = (data: Omit<Property, 'id' | 'occupiedUnits' | 'monthlyRevenue'>): Property => {
@@ -648,12 +656,18 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const updateProperty = useCallback((id: string, updates: Partial<Property>) => {
     setProperties(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
-  }, []);
+    if (isBackendOnline) {
+      api.updateProperty(id, updates).catch(err => console.warn('Go backend updateProperty error:', err));
+    }
+  }, [isBackendOnline]);
 
   const deleteProperty = useCallback((id: string) => {
     setProperties(prev => prev.filter(p => p.id !== id));
     setUnits(prev => prev.filter(u => u.propertyId !== id));
-  }, []);
+    if (isBackendOnline) {
+      api.deleteProperty(id).catch(err => console.warn('Go backend deleteProperty error:', err));
+    }
+  }, [isBackendOnline]);
 
   // Unit CRUD
   const addUnit = (data: Omit<Unit, 'id'>): Unit => {
@@ -671,11 +685,17 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const updateUnit = useCallback((id: string, updates: Partial<Unit>) => {
     setUnits(prev => prev.map(u => u.id === id ? { ...u, ...updates } : u));
-  }, []);
+    if (isBackendOnline) {
+      api.updateUnit(id, updates).catch(err => console.warn('Go backend updateUnit error:', err));
+    }
+  }, [isBackendOnline]);
 
   const deleteUnit = useCallback((id: string) => {
     setUnits(prev => prev.filter(u => u.id !== id));
-  }, []);
+    if (isBackendOnline) {
+      api.deleteUnit(id).catch(err => console.warn('Go backend deleteUnit error:', err));
+    }
+  }, [isBackendOnline]);
 
   // Tenant CRUD
   const addTenant = (data: Omit<Tenant, 'id'>): Tenant => {
@@ -707,7 +727,10 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const deleteTenant = useCallback((id: string) => {
     setTenants(prev => prev.filter(t => t.id !== id));
-  }, []);
+    if (isBackendOnline) {
+      api.deleteTenant(id).catch(err => console.warn('Go backend deleteTenant error:', err));
+    }
+  }, [isBackendOnline]);
 
   // Helper selectors
   const getUnitById = useCallback((unitId: string) => units.find(u => u.id === unitId), [units]);
@@ -785,6 +808,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       localStorage.removeItem(STORAGE_KEYS.TENANTS);
       localStorage.removeItem(STORAGE_KEYS.REQUESTS);
       localStorage.removeItem(STORAGE_KEYS.USER);
+      localStorage.removeItem('haven_kenya_token_v1');
 
       setProperties(INITIAL_PROPERTIES);
       setUnits(INITIAL_UNITS);

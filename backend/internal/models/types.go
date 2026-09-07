@@ -14,7 +14,7 @@ type User struct {
 	Name         string   `json:"name"`
 	Email        string   `json:"email"`
 	Phone        string   `json:"phone"`
-	Password     string   `json:"password,omitempty"`
+	Password     string   `json:"-"`
 	Role         UserRole `json:"role"` // "landlord" | "tenant"
 	PropertyID   string   `json:"propertyId,omitempty"`
 	PropertyName string   `json:"propertyName,omitempty"`

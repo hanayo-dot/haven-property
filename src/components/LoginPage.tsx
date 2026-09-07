@@ -100,6 +100,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         name: regName.trim(),
         email: regEmail.trim() || `${regName.toLowerCase().replace(/\s+/g, '.')}@plotismarta.co.ke`,
         phone: regPhone.trim() || '+254 700 000 000',
+        password: regPassword || 'haven2026',
         role: regRole,
         propertyId: regRole === 'tenant' ? regPropertyId : undefined,
         propertyName: regRole === 'tenant' ? selectedProp?.name : undefined,
@@ -107,7 +108,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         avatarUrl: regRole === 'landlord'
           ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
           : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
-      }, regPassword || 'haven2026');
+      });
     } catch (err: any) {
       setLocalError(err.message || 'Registration failed. Please try again.');
     } finally {
