@@ -16,7 +16,13 @@ async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promi
   const headers = new Headers(init.headers);
   const token = localStorage.getItem('haven_kenya_token_v1');
   if (token) headers.set('Authorization', `Bearer ${token}`);
-  return fetch(input, { ...init, headers });
+  const response = await fetch(input, { ...init, headers });
+  if (response.status === 401) {
+    localStorage.removeItem('haven_kenya_token_v1');
+    localStorage.removeItem('haven_kenya_user_v1');
+    window.dispatchEvent(new Event('haven-auth-expired'));
+  }
+  return response;
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {

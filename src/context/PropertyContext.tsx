@@ -121,6 +121,7 @@ const PropertyContext = createContext<PropertyContextType | undefined>(undefined
 
 const STORAGE_KEYS = {
   USER: 'haven_kenya_user_v1',
+  TOKEN: 'haven_kenya_token_v1',
   PROPERTIES: 'haven_kenya_properties_v1',
   UNITS: 'haven_kenya_units_v1',
   TENANTS: 'haven_kenya_tenants_v1',
@@ -138,7 +139,8 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.USER);
-      return saved ? JSON.parse(saved) : null;
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      return saved && token ? JSON.parse(saved) : null;
     } catch {
       return null;
     }
@@ -321,7 +323,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setViewMode('landlord');
     try {
       localStorage.removeItem(STORAGE_KEYS.USER);
-      localStorage.removeItem('haven_kenya_token_v1');
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
       sessionStorage.clear();
       // Clean URL params if any
       if (window.location.search) {
@@ -340,7 +342,10 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const healthy = await api.checkHealth();
         if (healthy && isMounted) {
           setIsBackendOnline(true);
-          if (!localStorage.getItem('haven_kenya_token_v1')) return;
+          if (!localStorage.getItem(STORAGE_KEYS.TOKEN)) {
+            if (isMounted) setCurrentUser(null);
+            return;
+          }
           const [backendProps, backendUnits, backendTenants, backendRequests] = await Promise.all([
             api.getProperties().catch(() => null),
             api.getUnits().catch(() => null),
@@ -359,6 +364,15 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     initBackend();
     return () => { isMounted = false; };
   }, [currentUser]);
+
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      setCurrentUser(null);
+      setViewMode('landlord');
+    };
+    window.addEventListener('haven-auth-expired', handleAuthExpired);
+    return () => window.removeEventListener('haven-auth-expired', handleAuthExpired);
+  }, []);
 
   // Save to localStorage
   useEffect(() => {
@@ -808,7 +822,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       localStorage.removeItem(STORAGE_KEYS.TENANTS);
       localStorage.removeItem(STORAGE_KEYS.REQUESTS);
       localStorage.removeItem(STORAGE_KEYS.USER);
-      localStorage.removeItem('haven_kenya_token_v1');
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
 
       setProperties(INITIAL_PROPERTIES);
       setUnits(INITIAL_UNITS);

@@ -81,7 +81,7 @@ func parseToken(token string) (*authClaims, error) {
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
-		if r.Method == http.MethodOptions || r.URL.Path == "/api/health" || r.URL.Path == "/api/auth/login" || r.URL.Path == "/api/auth/register" {
+		if !strings.HasPrefix(r.URL.Path, "/api") || r.Method == http.MethodOptions || r.URL.Path == "/api/health" || r.URL.Path == "/api/auth/login" || r.URL.Path == "/api/auth/register" {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -102,7 +102,7 @@ func Auth(next http.Handler) http.Handler {
 
 func Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodOptions || r.URL.Path == "/api/health" || r.URL.Path == "/api/auth/login" || r.URL.Path == "/api/auth/register" {
+		if !strings.HasPrefix(r.URL.Path, "/api") || r.Method == http.MethodOptions || r.URL.Path == "/api/health" || r.URL.Path == "/api/auth/login" || r.URL.Path == "/api/auth/register" {
 			next.ServeHTTP(w, r)
 			return
 		}

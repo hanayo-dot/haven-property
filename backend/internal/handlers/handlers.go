@@ -92,7 +92,7 @@ func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	middleware.JSON(w, map[string]interface{}{
 		"status":    "healthy",
 		"service":   "Haven Property Management OS (Go)",
-		"timestamp": fmt.Sprint(r.Context()),
+		"timestamp": time.Now().UTC(),
 	}, http.StatusOK)
 }
 
