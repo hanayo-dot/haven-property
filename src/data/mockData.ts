@@ -27,8 +27,8 @@ export const DEMO_USERS: User[] = [
   {
     id: 'user-tenant-2',
     name: 'Wanjiru Mwangi',
-    email: 'wanjiru.m@yahoo.com',
-    phone: '+254 721 554 433',
+    email: 'wanjiru.m@gmail.com',
+    phone: '+254 720 112 233',
     role: 'tenant',
     propertyId: 'prop-2',
     propertyName: 'Westlands Green Suites',
@@ -42,8 +42,8 @@ export const DEMO_USERS: User[] = [
   {
     id: 'user-tenant-3',
     name: 'Fatuma Hassan',
-    email: 'fatuma.hassan@outlook.com',
-    phone: '+254 701 223 344',
+    email: 'fatuma.h@gmail.com',
+    phone: '+254 733 445 566',
     role: 'tenant',
     propertyId: 'prop-3',
     propertyName: 'Kileleshwa Terraces',

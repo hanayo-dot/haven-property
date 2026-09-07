@@ -230,6 +230,11 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
       } catch (err: any) {
         console.warn('Backend login sync fallback:', err);
+        if (isBackendOnline) {
+          const msg = err.message || 'Login failed. Please check your credentials.';
+          setAuthError(msg);
+          throw err;
+        }
       }
 
       setCurrentUser(user);
