@@ -115,7 +115,7 @@ func Authorize(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		if claims.Role == "tenant" && ((r.Method == http.MethodGet && (r.URL.Path == "/api/properties" || r.URL.Path == "/api/units" || strings.HasPrefix(r.URL.Path, "/api/properties/") || strings.HasPrefix(r.URL.Path, "/api/units/"))) || r.URL.Path == "/api/auth/me" || r.URL.Path == "/api/tenant/tickets" || r.URL.Path == "/api/tenant/mpesa/simulate" || (r.Method == http.MethodPost && r.URL.Path == "/api/maintenance")) {
+		if claims.Role == "tenant" && ((r.Method == http.MethodGet && (r.URL.Path == "/api/properties" || r.URL.Path == "/api/units" || strings.HasPrefix(r.URL.Path, "/api/properties/") || strings.HasPrefix(r.URL.Path, "/api/units/"))) || r.URL.Path == "/api/auth/me" || r.URL.Path == "/api/tenant/tickets" || r.URL.Path == "/api/tenant/mpesa/simulate" || (r.Method == http.MethodPost && (r.URL.Path == "/api/maintenance" || r.URL.Path == "/api/ai/diagnose"))) {
 			next.ServeHTTP(w, r)
 			return
 		}

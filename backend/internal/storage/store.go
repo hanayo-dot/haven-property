@@ -407,7 +407,7 @@ func (s *Store) RegisterUser(req models.RegisterRequest) (*models.User, error) {
 		Name:         req.Name,
 		Email:        cleanEmail,
 		Phone:        req.Phone,
-		Password:     userPass,
+		Password:     hashPassword(userPass),
 		Role:         req.Role,
 		PropertyID:   req.PropertyID,
 		PropertyName: req.PropertyName,
