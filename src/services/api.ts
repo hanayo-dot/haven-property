@@ -27,6 +27,10 @@ async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promi
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.status === 405 || contentType.includes('text/html')) {
+      throw new Error(`API endpoint unavailable (${res.status})`);
+    }
     const errorText = await res.text().catch(() => 'Unknown error');
     throw new Error(`API Error ${res.status}: ${errorText}`);
   }
@@ -38,7 +42,11 @@ export const api = {
   async checkHealth(): Promise<boolean> {
     try {
       const res = await apiFetch(`${API_BASE}/health`, { method: 'GET' });
-      return res.ok;
+      if (!res.ok) return false;
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) return false;
+      const data = await res.json();
+      return data && data.status === 'healthy';
     } catch {
       return false;
     }

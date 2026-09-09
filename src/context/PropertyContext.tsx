@@ -245,8 +245,8 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     // String identifier (Email or Phone number typed in by user)
     const identifier = identifierOrUser.trim();
-    try {
-      if (isBackendOnline) {
+    if (isBackendOnline) {
+      try {
         const resp = await api.login(identifier, password, roleHint, nameHint);
         if (resp && resp.user) {
           setCurrentUser(resp.user);
@@ -254,11 +254,15 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setViewMode(resp.user.role === 'tenant' ? 'tenant-portal' : 'landlord');
           return resp.user;
         }
+      } catch (err: any) {
+        console.warn('Backend login failed, checking fallback:', err);
+        const errorMsg = err.message || '';
+        if (errorMsg.toLowerCase().includes('invalid credentials')) {
+          setAuthError('Invalid credentials. Please check your email/phone and password.');
+          throw err;
+        }
+        setIsBackendOnline(false);
       }
-    } catch (err: any) {
-      const msg = err.message || 'Login failed. Please check your credentials.';
-      setAuthError(msg);
-      throw err;
     }
 
     // Fallback local match
@@ -288,8 +292,8 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const register = useCallback(async (data: Partial<User> & { password?: string }): Promise<User> => {
     setAuthError(null);
-    try {
-      if (isBackendOnline) {
+    if (isBackendOnline) {
+      try {
         const resp = await api.register(data);
         if (resp && resp.user) {
           setCurrentUser(resp.user);
@@ -297,11 +301,15 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setViewMode(resp.user.role === 'tenant' ? 'tenant-portal' : 'landlord');
           return resp.user;
         }
+      } catch (err: any) {
+        console.warn('Backend register failed, checking fallback:', err);
+        const errorMsg = err.message || '';
+        if (errorMsg.toLowerCase().includes('already exists')) {
+          setAuthError(errorMsg);
+          throw err;
+        }
+        setIsBackendOnline(false);
       }
-    } catch (err: any) {
-      const msg = err.message || 'Registration failed. Please try again.';
-      setAuthError(msg);
-      throw err;
     }
 
     const newUser: User = {
